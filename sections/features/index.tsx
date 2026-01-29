@@ -17,57 +17,145 @@ const iconMap = {
 };
 
 function Features3D() {
-    const groupRef = useRef<THREE.Group>(null);
+    const brainRef = useRef<THREE.Group>(null);
+    const shieldRef = useRef<THREE.Group>(null);
+    const layersRef = useRef<THREE.Group>(null);
 
     useFrame((state) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
+        const time = state.clock.elapsedTime;
+
+        // Brain rotation
+        if (brainRef.current) {
+            brainRef.current.rotation.y = time * 0.3;
+            brainRef.current.position.y = Math.sin(time * 0.5) * 0.2;
+        }
+
+        // Shield subtle rotation
+        if (shieldRef.current) {
+            shieldRef.current.rotation.y = Math.sin(time * 0.4) * 0.3;
+            shieldRef.current.position.y = Math.cos(time * 0.6) * 0.2;
+        }
+
+        // Layers rotation
+        if (layersRef.current) {
+            layersRef.current.rotation.y = time * 0.2;
+            layersRef.current.position.y = Math.sin(time * 0.7) * 0.15;
         }
     });
 
     return (
         <>
-            <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={50} />
-            <ambientLight intensity={1} />
-            <pointLight position={[5, 5, 5]} intensity={2} color="#ff0f39" />
-            <pointLight position={[-5, -5, 5]} intensity={1.5} color="#ff6688" />
+            <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
+            <ambientLight intensity={0.8} />
+            <pointLight position={[5, 5, 5]} intensity={2.5} color="#ff0f39" />
+            <pointLight position={[-5, -5, 5]} intensity={2} color="#ff6688" />
+            <spotLight position={[0, 10, 5]} intensity={1.5} angle={0.5} penumbra={1} />
 
-            <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-                <group ref={groupRef}>
-                    {/* Central core sphere */}
+            {/* AI Brain - representing intelligence */}
+            <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.3}>
+                <group ref={brainRef} position={[-2.5, 1.5, 0]}>
+                    {/* Central brain core */}
                     <mesh>
-                        <sphereGeometry args={[0.8, 32, 32]} />
+                        <sphereGeometry args={[0.5, 32, 32]} />
+                        <meshPhysicalMaterial
+                            color="#ff0f39"
+                            metalness={0.8}
+                            roughness={0.2}
+                            emissive="#ff0f39"
+                            emissiveIntensity={0.7}
+                            clearcoat={1}
+                        />
+                    </mesh>
+                    {/* Neural connections */}
+                    {[0, 1, 2, 3, 4].map((i) => {
+                        const angle = (i / 5) * Math.PI * 2;
+                        const radius = 0.7;
+                        const x = Math.cos(angle) * radius;
+                        const y = Math.sin(angle) * radius;
+                        return (
+                            <group key={i}>
+                                <mesh position={[x, y, 0]}>
+                                    <sphereGeometry args={[0.12, 16, 16]} />
+                                    <meshStandardMaterial
+                                        color="#ff4466"
+                                        emissive="#ff4466"
+                                        emissiveIntensity={0.5}
+                                    />
+                                </mesh>
+                                {/* Connection lines */}
+                                <mesh position={[x/2, y/2, 0]} rotation={[0, 0, angle]}>
+                                    <cylinderGeometry args={[0.02, 0.02, radius, 8]} />
+                                    <meshStandardMaterial
+                                        color="#ff0f39"
+                                        emissive="#ff0f39"
+                                        emissiveIntensity={0.4}
+                                        transparent
+                                        opacity={0.6}
+                                    />
+                                </mesh>
+                            </group>
+                        );
+                    })}
+                </group>
+            </Float>
+
+            {/* Shield - representing security/privacy */}
+            <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
+                <group ref={shieldRef} position={[2.5, -1, 0]}>
+                    {/* Shield body */}
+                    <mesh>
+                        <boxGeometry args={[1, 1.3, 0.15]} />
                         <meshPhysicalMaterial
                             color="#ff0f39"
                             metalness={0.9}
                             roughness={0.1}
                             emissive="#ff0f39"
-                            emissiveIntensity={0.6}
+                            emissiveIntensity={0.5}
                             clearcoat={1}
                         />
                     </mesh>
+                    {/* Shield top */}
+                    <mesh position={[0, 0.75, 0]}>
+                        <coneGeometry args={[0.5, 0.5, 4]} />
+                        <meshPhysicalMaterial
+                            color="#ff0f39"
+                            metalness={0.9}
+                            roughness={0.1}
+                            emissive="#ff0f39"
+                            emissiveIntensity={0.5}
+                            clearcoat={1}
+                        />
+                    </mesh>
+                    {/* Shield emblem */}
+                    <mesh position={[0, 0, 0.1]}>
+                        <sphereGeometry args={[0.25, 16, 16]} />
+                        <meshStandardMaterial
+                            color="#ff6688"
+                            emissive="#ff6688"
+                            emissiveIntensity={0.8}
+                        />
+                    </mesh>
+                </group>
+            </Float>
 
-                    {/* Orbiting feature cubes */}
-                    {[0, 1, 2, 3, 4, 5].map((i) => {
-                        const angle = (i / 6) * Math.PI * 2;
-                        const radius = 2;
-                        const x = Math.cos(angle) * radius;
-                        const y = Math.sin(angle) * radius;
-
-                        return (
-                            <mesh key={i} position={[x, y, 0]}>
-                                <boxGeometry args={[0.3, 0.3, 0.3]} />
-                                <meshPhysicalMaterial
-                                    color="#ff4466"
-                                    metalness={1}
-                                    roughness={0.1}
-                                    emissive="#ff4466"
-                                    emissiveIntensity={0.5}
-                                    clearcoat={1}
-                                />
-                            </mesh>
-                        );
-                    })}
+            {/* Layered stack - representing multi-model support */}
+            <Float speed={1.8} rotationIntensity={0.4} floatIntensity={0.3}>
+                <group ref={layersRef} position={[0, -1.5, -1]}>
+                    {[0, 1, 2].map((i) => (
+                        <mesh key={i} position={[0, i * 0.35, 0]}>
+                            <boxGeometry args={[1.2 - i * 0.15, 0.2, 1.2 - i * 0.15]} />
+                            <meshPhysicalMaterial
+                                color="#ff4466"
+                                metalness={0.8}
+                                roughness={0.2}
+                                emissive="#ff4466"
+                                emissiveIntensity={0.4 + i * 0.1}
+                                clearcoat={1}
+                                transparent
+                                opacity={0.9}
+                            />
+                        </mesh>
+                    ))}
                 </group>
             </Float>
         </>

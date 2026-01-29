@@ -22,58 +22,110 @@ const performanceColors = {
 };
 
 function Models3D() {
-    const groupRef = useRef<THREE.Group>(null);
+    const mainRef = useRef<THREE.Group>(null);
+    const orbitRefs = useRef<THREE.Mesh[]>([]);
 
     useFrame((state) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
-            groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+        const time = state.clock.elapsedTime;
+
+        // Main hub rotation
+        if (mainRef.current) {
+            mainRef.current.rotation.y = time * 0.2;
         }
+
+        // Individual model nodes rotation
+        orbitRefs.current.forEach((mesh, i) => {
+            if (mesh) {
+                const angle = (i / 5) * Math.PI * 2 + time * 0.3;
+                const radius = 2.5;
+                mesh.position.x = Math.cos(angle) * radius;
+                mesh.position.z = Math.sin(angle) * radius;
+                mesh.position.y = Math.sin(time * 0.5 + i) * 0.3;
+                mesh.rotation.y = time * 0.4;
+            }
+        });
     });
 
     return (
         <>
-            <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={50} />
-            <ambientLight intensity={1} />
-            <pointLight position={[5, 5, 5]} intensity={2} color="#ff0f39" />
-            <pointLight position={[-5, -5, 5]} intensity={1.5} color="#ff4466" />
+            <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
+            <ambientLight intensity={0.8} />
+            <pointLight position={[5, 5, 5]} intensity={2.5} color="#ff0f39" />
+            <pointLight position={[-5, -5, 5]} intensity={2} color="#ff6688" />
+            <spotLight position={[0, 10, 5]} intensity={1.5} angle={0.5} penumbra={1} />
 
-            <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
-                <group ref={groupRef}>
-                    {/* Central diamond */}
+            <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
+                <group ref={mainRef}>
+                    {/* Central AI Hub - larger crystal */}
                     <mesh>
-                        <octahedronGeometry args={[1.2, 0]} />
+                        <icosahedronGeometry args={[1, 0]} />
                         <meshPhysicalMaterial
                             color="#ff0f39"
                             metalness={0.9}
-                            roughness={0.1}
+                            roughness={0.05}
                             emissive="#ff0f39"
-                            emissiveIntensity={0.6}
+                            emissiveIntensity={0.8}
                             clearcoat={1}
+                            transmission={0.1}
                         />
                     </mesh>
 
-                    {/* Surrounding model spheres */}
-                    {[0, 1, 2].map((i) => {
-                        const angle = (i / 3) * Math.PI * 2;
-                        const radius = 2.5;
-                        const x = Math.cos(angle) * radius;
-                        const z = Math.sin(angle) * radius;
+                    {/* Inner glow sphere */}
+                    <mesh>
+                        <sphereGeometry args={[0.6, 32, 32]} />
+                        <meshStandardMaterial
+                            color="#ff0f39"
+                            emissive="#ff0f39"
+                            emissiveIntensity={1.2}
+                            transparent
+                            opacity={0.3}
+                        />
+                    </mesh>
+
+                    {/* Orbiting AI Model nodes - 5 different models */}
+                    {[0, 1, 2, 3, 4].map((i) => {
+                        // Different shapes for different model types
+                        const shapes = [
+                            <octahedronGeometry key={i} args={[0.35, 0]} />,
+                            <dodecahedronGeometry key={i} args={[0.35, 0]} />,
+                            <tetrahedronGeometry key={i} args={[0.4, 0]} />,
+                            <boxGeometry key={i} args={[0.5, 0.5, 0.5]} />,
+                            <icosahedronGeometry key={i} args={[0.35, 0]} />,
+                        ];
 
                         return (
-                            <mesh key={i} position={[x, 0, z]}>
-                                <sphereGeometry args={[0.4, 32, 32]} />
+                            <mesh
+                                key={i}
+                                ref={(el) => {
+                                    if (el) orbitRefs.current[i] = el;
+                                }}
+                            >
+                                {shapes[i]}
                                 <meshPhysicalMaterial
                                     color="#ff4466"
-                                    metalness={1}
+                                    metalness={0.9}
                                     roughness={0.1}
                                     emissive="#ff4466"
-                                    emissiveIntensity={0.5}
+                                    emissiveIntensity={0.6}
                                     clearcoat={1}
                                 />
                             </mesh>
                         );
                     })}
+
+                    {/* Connection rings */}
+                    {[0, 1].map((i) => (
+                        <mesh key={`ring-${i}`} rotation={[Math.PI / 4 + i * Math.PI / 2, Math.PI / 4, 0]}>
+                            <torusGeometry args={[2.5, 0.03, 16, 100]} />
+                            <meshStandardMaterial
+                                color="#ff0f39"
+                                emissive="#ff0f39"
+                                emissiveIntensity={0.4}
+                                transparent
+                                opacity={0.4}
+                            />
+                        </mesh>
+                    ))}
                 </group>
             </Float>
         </>
