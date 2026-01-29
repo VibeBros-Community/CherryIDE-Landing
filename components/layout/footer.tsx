@@ -25,7 +25,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-dark-surface border-t border-dark-border">
+    <footer className="relative bg-gradient-to-b from-[#4a020d] to-black">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
@@ -49,7 +49,7 @@ export default function Footer() {
                 href={siteConfig.links.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-cherry-400 transition-colors"
               >
                 <Github className="w-5 h-5" />
               </Link>
@@ -57,7 +57,7 @@ export default function Footer() {
                 href={siteConfig.links.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 hover:text-cherry-400 transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </Link>
@@ -72,7 +72,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                    className="text-gray-400 hover:text-cherry-400 transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -89,7 +89,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                    className="text-gray-400 hover:text-cherry-400 transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -106,7 +106,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
+                    className="text-gray-400 hover:text-cherry-400 transition-colors text-sm"
                   >
                     {link.label}
                   </Link>
@@ -117,7 +117,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-dark-border">
+        <div className="pt-8 border-t border-cherry-500/20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} Cherry IDE. Open-source under MIT License.
