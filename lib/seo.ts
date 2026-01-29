@@ -2,10 +2,15 @@ export const siteConfig = {
   name: 'Cherry IDE',
   description: 'The first IDE with built-in open-source AI models. Code faster with Llama, Mistral, and more—100% local, 100% private.',
   url: 'https://cherryide.com',
-  ogImage: 'https://cherryide.com/images/og/home.png',
+  ogImage: 'https://cherryide.com/opengraph-image.png',
   links: {
     github: 'https://github.com/cherryide/cherryide',
     twitter: 'https://twitter.com/cherryide',
+  },
+  stats: {
+    downloads: 50000,
+    githubStars: 12000,
+    supportedModels: 25,
   },
 };
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, X } from 'lucide-react';
+import MotionWrapper from '@/components/animations/motion-wrapper';
 
 const comparisonData = [
   { feature: 'Cost', cherry: 'Free Forever', cursor: '$20/month', windsurf: '$15/month' },
@@ -17,17 +18,17 @@ export default function Differentiators() {
     <section id="differentiators" className="py-24 bg-dark-bg relative">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <MotionWrapper className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
             Why Choose Cherry IDE?
           </h2>
           <p className="text-xl text-gray-400">
             Compare Cherry IDE with other AI-powered code editors
           </p>
-        </div>
+        </MotionWrapper>
 
         {/* Comparison Table */}
-        <div className="max-w-5xl mx-auto overflow-x-auto">
+        <MotionWrapper delay={0.2} className="max-w-5xl mx-auto overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b border-dark-border">
@@ -84,30 +85,30 @@ export default function Differentiators() {
               ))}
             </tbody>
           </table>
-        </div>
+        </MotionWrapper>
 
         {/* Key Differentiators */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mt-16">
-          <div className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
+          <MotionWrapper delay={0.3} className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
             <div className="text-4xl mb-2">🔓</div>
             <h3 className="text-xl font-bold text-white mb-2">Open Source</h3>
             <p className="text-gray-400">Fork, customize, and contribute</p>
-          </div>
-          <div className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
+          </MotionWrapper>
+          <MotionWrapper delay={0.4} className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
             <div className="text-4xl mb-2">🔒</div>
             <h3 className="text-xl font-bold text-white mb-2">Privacy First</h3>
             <p className="text-gray-400">Your code stays on your machine</p>
-          </div>
-          <div className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
+          </MotionWrapper>
+          <MotionWrapper delay={0.5} className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
             <div className="text-4xl mb-2">💰</div>
             <h3 className="text-xl font-bold text-white mb-2">Zero Cost</h3>
             <p className="text-gray-400">Free forever, no hidden fees</p>
-          </div>
-          <div className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
+          </MotionWrapper>
+          <MotionWrapper delay={0.6} className="text-center p-6 bg-dark-surface rounded-xl border border-dark-border">
             <div className="text-4xl mb-2">🎯</div>
             <h3 className="text-xl font-bold text-white mb-2">Full Control</h3>
             <p className="text-gray-400">Choose your AI, your way</p>
-          </div>
+          </MotionWrapper>
         </div>
       </div>
     </section>

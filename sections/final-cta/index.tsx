@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import MotionWrapper from '@/components/animations/motion-wrapper';
 
 export default function FinalCTA() {
   return (
@@ -11,7 +12,7 @@ export default function FinalCTA() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cherry-500/5 via-transparent to-transparent" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <MotionWrapper className="max-w-4xl mx-auto text-center">
           {/* Main CTA */}
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Ready to Code with{' '}
@@ -55,7 +56,7 @@ export default function FinalCTA() {
               <div className="text-sm text-gray-400">Forever</div>
             </div>
           </div>
-        </div>
+        </MotionWrapper>
       </div>
     </section>
   );
