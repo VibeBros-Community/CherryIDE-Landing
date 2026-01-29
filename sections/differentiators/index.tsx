@@ -2,10 +2,7 @@
 
 import { Check, X } from 'lucide-react';
 import MotionWrapper from '@/components/animations/motion-wrapper';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, PerspectiveCamera } from '@react-three/drei';
-import { useRef } from 'react';
-import * as THREE from 'three';
+import Image from 'next/image';
 
 const comparisonData = [
   { feature: 'Cost', cherry: 'Free Forever', cursor: '$20/month', windsurf: '$15/month' },
@@ -17,136 +14,6 @@ const comparisonData = [
   { feature: 'Customizable', cherry: true, cursor: 'Limited', windsurf: 'Limited' },
 ];
 
-function Differentiators3D() {
-  const trophyRef = useRef<THREE.Group>(null);
-  const starsRef = useRef<THREE.Group>(null);
-
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-
-    // Trophy subtle rotation
-    if (trophyRef.current) {
-      trophyRef.current.rotation.y = Math.sin(time * 0.5) * 0.2;
-      trophyRef.current.position.y = Math.sin(time * 0.8) * 0.1;
-    }
-
-    // Stars rotation
-    if (starsRef.current) {
-      starsRef.current.rotation.y = time * 0.3;
-    }
-  });
-
-  return (
-    <>
-      <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={50} />
-      <ambientLight intensity={0.8} />
-      <pointLight position={[5, 5, 5]} intensity={2.5} color="#ff0f39" />
-      <pointLight position={[-5, -5, 5]} intensity={2} color="#ffaa00" />
-      <spotLight position={[0, 10, 5]} intensity={1.5} angle={0.5} penumbra={1} />
-
-      <Float speed={1.2} rotationIntensity={0.2} floatIntensity={0.3}>
-        <group ref={trophyRef}>
-          {/* Trophy base platform */}
-          <mesh position={[0, -1.2, 0]}>
-            <cylinderGeometry args={[1, 1.2, 0.3, 32]} />
-            <meshPhysicalMaterial
-              color="#1a1a1a"
-              metalness={0.9}
-              roughness={0.2}
-              clearcoat={1}
-            />
-          </mesh>
-
-          {/* Trophy stem */}
-          <mesh position={[0, -0.6, 0]}>
-            <cylinderGeometry args={[0.15, 0.2, 0.8, 16]} />
-            <meshPhysicalMaterial
-              color="#ff0f39"
-              metalness={0.9}
-              roughness={0.1}
-              emissive="#ff0f39"
-              emissiveIntensity={0.3}
-              clearcoat={1}
-            />
-          </mesh>
-
-          {/* Trophy cup body */}
-          <mesh position={[0, 0.3, 0]}>
-            <cylinderGeometry args={[0.7, 0.5, 1.2, 32]} />
-            <meshPhysicalMaterial
-              color="#ff0f39"
-              metalness={0.95}
-              roughness={0.05}
-              emissive="#ff0f39"
-              emissiveIntensity={0.5}
-              clearcoat={1}
-              clearcoatRoughness={0}
-            />
-          </mesh>
-
-          {/* Trophy top rim */}
-          <mesh position={[0, 0.95, 0]}>
-            <cylinderGeometry args={[0.75, 0.7, 0.15, 32]} />
-            <meshPhysicalMaterial
-              color="#ff4466"
-              metalness={0.95}
-              roughness={0.05}
-              emissive="#ff4466"
-              emissiveIntensity={0.6}
-              clearcoat={1}
-            />
-          </mesh>
-
-          {/* Trophy handles */}
-          {[-1, 1].map((side) => (
-            <mesh key={side} position={[side * 0.8, 0.4, 0]} rotation={[0, 0, side * Math.PI / 6]}>
-              <torusGeometry args={[0.3, 0.08, 16, 32]} />
-              <meshPhysicalMaterial
-                color="#ff0f39"
-                metalness={0.9}
-                roughness={0.1}
-                emissive="#ff0f39"
-                emissiveIntensity={0.4}
-                clearcoat={1}
-              />
-            </mesh>
-          ))}
-
-          {/* Winner emblem on cup */}
-          <mesh position={[0, 0.3, 0.72]}>
-            <sphereGeometry args={[0.2, 32, 32]} />
-            <meshStandardMaterial
-              color="#ffaa00"
-              emissive="#ffaa00"
-              emissiveIntensity={1}
-            />
-          </mesh>
-        </group>
-      </Float>
-
-      {/* Orbiting stars/sparkles */}
-      <group ref={starsRef}>
-        {[0, 1, 2, 3].map((i) => {
-          const angle = (i / 4) * Math.PI * 2;
-          const radius = 2;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
-
-          return (
-            <mesh key={i} position={[x, y, 0]}>
-              <octahedronGeometry args={[0.15, 0]} />
-              <meshStandardMaterial
-                color="#ffaa00"
-                emissive="#ffaa00"
-                emissiveIntensity={0.8}
-              />
-            </mesh>
-          );
-        })}
-      </group>
-    </>
-  );
-}
 
 export default function Differentiators() {
   return (
@@ -253,11 +120,55 @@ export default function Differentiators() {
             </div>
           </div>
 
-          {/* 3D Content (Right) */}
-          <div className="order-2 h-[400px] w-full relative hidden lg:block">
-            <Canvas camera={{ position: [0, 0, 6], fov: 50 }} style={{ width: '100%', height: '100%' }}>
-              <Differentiators3D />
-            </Canvas>
+          {/* IDE Screenshot (Right) */}
+          <div className="order-2 relative hidden lg:block">
+            <div className="relative group">
+              {/* Glow effect background */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-cherry-500/20 via-rose-500/20 to-pink-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+              {/* Main IDE container with perspective */}
+              <div className="relative perspective-1000">
+                <div className="relative transform transition-all duration-700 group-hover:scale-[1.02] group-hover:-translate-y-2">
+                  {/* Border gradient wrapper */}
+                  <div className="relative rounded-2xl p-[2px] bg-gradient-to-br from-cherry-500/40 via-rose-500/30 to-transparent">
+                    {/* Inner border for depth */}
+                    <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-zinc-900/90 via-black/95 to-black border border-white/5">
+                      {/* IDE Image */}
+                      <div className="relative aspect-[16/10] w-full">
+                        <Image
+                          src="/images/IDE.png"
+                          alt="Cherry IDE Interface"
+                          fill
+                          className="object-cover object-center"
+                          priority
+                          quality={95}
+                        />
+
+                        {/* Subtle overlay gradient for polish */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+
+                        {/* Shine effect on hover */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+                        </div>
+                      </div>
+
+                      {/* Subtle inner shadow for depth */}
+                      <div className="absolute inset-0 rounded-2xl shadow-inner pointer-events-none" style={{
+                        boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.5)'
+                      }} />
+                    </div>
+                  </div>
+
+                  {/* Outer glow shadow */}
+                  <div className="absolute -inset-[1px] rounded-2xl shadow-2xl shadow-cherry-500/20 -z-10 opacity-60 group-hover:opacity-100 transition-opacity duration-700" />
+                </div>
+              </div>
+
+              {/* Floating accent elements */}
+              <div className="absolute -top-6 -right-6 w-24 h-24 bg-cherry-500/10 rounded-full blur-3xl opacity-60 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl opacity-60 group-hover:opacity-100 transition-opacity duration-700" />
+            </div>
           </div>
 
         </div>

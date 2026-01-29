@@ -22,110 +22,44 @@ const performanceColors = {
 };
 
 function Models3D() {
-    const mainRef = useRef<THREE.Group>(null);
-    const orbitRefs = useRef<THREE.Mesh[]>([]);
+    const groupRef = useRef<THREE.Group>(null);
 
     useFrame((state) => {
-        const time = state.clock.elapsedTime;
-
-        // Main hub rotation
-        if (mainRef.current) {
-            mainRef.current.rotation.y = time * 0.2;
+        if (groupRef.current) {
+            groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
         }
-
-        // Individual model nodes rotation
-        orbitRefs.current.forEach((mesh, i) => {
-            if (mesh) {
-                const angle = (i / 5) * Math.PI * 2 + time * 0.3;
-                const radius = 2.5;
-                mesh.position.x = Math.cos(angle) * radius;
-                mesh.position.z = Math.sin(angle) * radius;
-                mesh.position.y = Math.sin(time * 0.5 + i) * 0.3;
-                mesh.rotation.y = time * 0.4;
-            }
-        });
     });
 
     return (
         <>
             <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
             <ambientLight intensity={0.8} />
-            <pointLight position={[5, 5, 5]} intensity={2.5} color="#ff0f39" />
-            <pointLight position={[-5, -5, 5]} intensity={2} color="#ff6688" />
-            <spotLight position={[0, 10, 5]} intensity={1.5} angle={0.5} penumbra={1} />
+            <pointLight position={[5, 5, 5]} intensity={1.5} color="#ff0f39" />
+            <pointLight position={[-5, -5, 5]} intensity={1} color="#ff6688" />
 
             <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-                <group ref={mainRef}>
-                    {/* Central AI Hub - larger crystal */}
-                    <mesh>
-                        <icosahedronGeometry args={[1, 0]} />
-                        <meshPhysicalMaterial
-                            color="#ff0f39"
-                            metalness={0.9}
-                            roughness={0.05}
-                            emissive="#ff0f39"
-                            emissiveIntensity={0.8}
-                            clearcoat={1}
-                            transmission={0.1}
-                        />
-                    </mesh>
-
-                    {/* Inner glow sphere */}
-                    <mesh>
-                        <sphereGeometry args={[0.6, 32, 32]} />
-                        <meshStandardMaterial
-                            color="#ff0f39"
-                            emissive="#ff0f39"
-                            emissiveIntensity={1.2}
-                            transparent
-                            opacity={0.3}
-                        />
-                    </mesh>
-
-                    {/* Orbiting AI Model nodes - 5 different models */}
-                    {[0, 1, 2, 3, 4].map((i) => {
-                        // Different shapes for different model types
-                        const shapes = [
-                            <octahedronGeometry key={i} args={[0.35, 0]} />,
-                            <dodecahedronGeometry key={i} args={[0.35, 0]} />,
-                            <tetrahedronGeometry key={i} args={[0.4, 0]} />,
-                            <boxGeometry key={i} args={[0.5, 0.5, 0.5]} />,
-                            <icosahedronGeometry key={i} args={[0.35, 0]} />,
-                        ];
-
-                        return (
-                            <mesh
-                                key={i}
-                                ref={(el) => {
-                                    if (el) orbitRefs.current[i] = el;
-                                }}
-                            >
-                                {shapes[i]}
-                                <meshPhysicalMaterial
-                                    color="#ff4466"
-                                    metalness={0.9}
-                                    roughness={0.1}
-                                    emissive="#ff4466"
-                                    emissiveIntensity={0.6}
-                                    clearcoat={1}
-                                />
-                            </mesh>
-                        );
-                    })}
-
-                    {/* Connection rings */}
-                    {[0, 1].map((i) => (
-                        <mesh key={`ring-${i}`} rotation={[Math.PI / 4 + i * Math.PI / 2, Math.PI / 4, 0]}>
-                            <torusGeometry args={[2.5, 0.03, 16, 100]} />
+                <group ref={groupRef}>
+                    {/* Simple layered rings */}
+                    {[0, 1, 2].map((i) => (
+                        <mesh key={i} position={[0, i * 0.8 - 0.8, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                            <torusGeometry args={[1.2 - i * 0.2, 0.08, 16, 32]} />
                             <meshStandardMaterial
                                 color="#ff0f39"
                                 emissive="#ff0f39"
-                                emissiveIntensity={0.4}
-                                transparent
-                                opacity={0.4}
+                                emissiveIntensity={0.6 - i * 0.1}
                             />
                         </mesh>
                     ))}
+
+                    {/* Central sphere */}
+                    <mesh>
+                        <sphereGeometry args={[0.4, 32, 32]} />
+                        <meshStandardMaterial
+                            color="#ff4466"
+                            emissive="#ff4466"
+                            emissiveIntensity={0.8}
+                        />
+                    </mesh>
                 </group>
             </Float>
         </>
@@ -148,6 +82,9 @@ export default function Models() {
 
   return (
     <section id="models" className="py-20 relative overflow-hidden bg-black">
+      {/* Subtle texture for depth */}
+      <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==')]" />
+
       <div className="container mx-auto px-4 relative z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

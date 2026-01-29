@@ -18,9 +18,12 @@ const features = [
 
 export default function PricingPreview() {
   return (
-    <section id="pricing" className="py-24 bg-[#0d0d0d] relative overflow-hidden">
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cherry-500/5 via-transparent to-transparent pointer-events-none" />
+    <section id="pricing" className="py-24 bg-gradient-to-b from-black via-[#1a0505] to-black relative overflow-hidden">
+      {/* Multi-layer gradient overlays */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,15,57,0.15)_0%,_transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(255,15,57,0.1)_0%,_transparent_50%)]" />
+      {/* Fine grain texture */}
+      <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJ0dXJidWxlbmNlIiBiYXNlRnJlcXVlbmN5PSIwLjkiIG51bU9jdGF2ZXM9IjQiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjUiLz48L3N2Zz4=')]" />
 
       <div className="container mx-auto px-4 relative z-10">
 
