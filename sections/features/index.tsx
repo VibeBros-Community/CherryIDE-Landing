@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef } from 'react';
-import { View, Float, PerspectiveCamera } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { Float, PerspectiveCamera } from '@react-three/drei';
 import { Brain, ShieldCheck, Code2, Layers, Terminal, Puzzle } from 'lucide-react';
 import { coreFeatures } from '@/config/features';
 import { useFrame } from '@react-three/fiber';
@@ -134,9 +135,9 @@ export default function Features() {
 
       {/* 3D Background Layer */}
       <div className="absolute inset-0 opacity-40">
-        <View className="w-full h-full">
+        <Canvas camera={{ position: [0, 0, 8], fov: 50 }} style={{ width: '100%', height: '100%' }}>
           <Features3D />
-        </View>
+        </Canvas>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">

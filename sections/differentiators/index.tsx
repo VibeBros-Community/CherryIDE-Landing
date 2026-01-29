@@ -2,7 +2,8 @@
 
 import { Check, X } from 'lucide-react';
 import MotionWrapper from '@/components/animations/motion-wrapper';
-import { View, Float, PerspectiveCamera } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { Float, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 const comparisonData = [
@@ -72,9 +73,9 @@ export default function Differentiators() {
 
           {/* 3D Content (Left) */}
           <div className="order-2 lg:order-1 h-[400px] w-full relative hidden lg:block">
-            <View className="absolute inset-0 w-full h-full">
+            <Canvas camera={{ position: [0, 0, 6], fov: 50 }} style={{ width: '100%', height: '100%' }}>
               <Differentiators3D />
-            </View>
+            </Canvas>
           </div>
 
           {/* Content (Right) */}

@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { View, Float, PerspectiveCamera, Points, PointMaterial } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Float, PerspectiveCamera, Points, PointMaterial } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { aiModels } from '@/data/models';
 import { Zap, Gauge, Rocket } from 'lucide-react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
 
 const performanceIcons = {
   fast: Zap,
@@ -134,9 +134,9 @@ export default function Models() {
 
             {/* 3D Content (Right) */}
             <div className="order-2 h-[500px] w-full relative hidden lg:block">
-              <View className="absolute inset-0 w-full h-full">
+              <Canvas camera={{ position: [0, 0, 12], fov: 50 }} style={{ width: '100%', height: '100%' }}>
                 <Models3D />
-              </View>
+              </Canvas>
             </div>
 
         </div>
