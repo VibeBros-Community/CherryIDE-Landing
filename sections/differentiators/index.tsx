@@ -71,15 +71,8 @@ export default function Differentiators() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-          {/* 3D Content (Left) */}
-          <div className="order-2 lg:order-1 h-[400px] w-full relative hidden lg:block">
-            <Canvas camera={{ position: [0, 0, 6], fov: 50 }} style={{ width: '100%', height: '100%' }}>
-              <Differentiators3D />
-            </Canvas>
-          </div>
-
-          {/* Content (Right) */}
-          <div className="order-1 lg:order-2">
+          {/* Content (Left) */}
+          <div className="order-1">
             {/* Section Header */}
             <MotionWrapper className="mb-10">
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
@@ -174,6 +167,13 @@ export default function Differentiators() {
                 <p className="text-xs text-gray-400">Your AI, your way</p>
               </MotionWrapper>
             </div>
+          </div>
+
+          {/* 3D Content (Right) */}
+          <div className="order-2 h-[400px] w-full relative hidden lg:block">
+            <Canvas camera={{ position: [0, 0, 6], fov: 50 }} style={{ width: '100%', height: '100%' }}>
+              <Differentiators3D />
+            </Canvas>
           </div>
 
         </div>
