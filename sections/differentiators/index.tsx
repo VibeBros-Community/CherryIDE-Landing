@@ -66,7 +66,7 @@ function Differentiators3D() {
 
 export default function Differentiators() {
   return (
-    <section id="differentiators" className="py-20 bg-gradient-to-br from-[#0a0a0a] via-[#141414] to-[#0a0a0a] relative overflow-hidden">
+    <section id="differentiators" className="py-20 bg-[#0d0d0d] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

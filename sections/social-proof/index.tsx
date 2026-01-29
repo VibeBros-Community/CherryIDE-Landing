@@ -7,7 +7,7 @@ import MotionWrapper from '@/components/animations/motion-wrapper';
 
 export default function SocialProof() {
   return (
-    <section id="testimonials" className="py-24 bg-dark-surface relative overflow-hidden">
+    <section id="testimonials" className="py-20 bg-black relative overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <MotionWrapper className="max-w-3xl mx-auto text-center mb-16">

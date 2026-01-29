@@ -7,7 +7,7 @@ import MotionWrapper from '@/components/animations/motion-wrapper';
 
 export default function FinalCTA() {
   return (
-    <section className="py-24 bg-gradient-to-b from-dark-surface to-dark-bg relative overflow-hidden">
+    <section className="py-20 bg-black relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cherry-500/5 via-transparent to-transparent" />
 

@@ -17,7 +17,7 @@ const features = [
 
 export default function PricingPreview() {
   return (
-    <section id="pricing" className="py-24 bg-dark-bg relative">
+    <section id="pricing" className="py-20 bg-[#0d0d0d] relative">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">

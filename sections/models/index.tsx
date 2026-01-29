@@ -35,8 +35,8 @@ function Models3D() {
         <>
             <PerspectiveCamera makeDefault position={[0, 0, 7]} fov={50} />
             <ambientLight intensity={1} />
-            <pointLight position={[5, 5, 5]} intensity={2} color="#6688ff" />
-            <pointLight position={[-5, -5, 5]} intensity={1.5} color="#ff0f39" />
+            <pointLight position={[5, 5, 5]} intensity={2} color="#ff0f39" />
+            <pointLight position={[-5, -5, 5]} intensity={1.5} color="#ff4466" />
 
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
                 <group ref={groupRef}>
@@ -44,10 +44,10 @@ function Models3D() {
                     <mesh>
                         <octahedronGeometry args={[1.2, 0]} />
                         <meshPhysicalMaterial
-                            color="#6688ff"
+                            color="#ff0f39"
                             metalness={0.9}
                             roughness={0.1}
-                            emissive="#6688ff"
+                            emissive="#ff0f39"
                             emissiveIntensity={0.6}
                             clearcoat={1}
                         />
@@ -95,7 +95,7 @@ export default function Models() {
   ];
 
   return (
-    <section id="models" className="py-20 relative overflow-hidden bg-gradient-to-b from-black via-[#000a14] to-black">
+    <section id="models" className="py-20 relative overflow-hidden bg-black">
       <div className="container mx-auto px-4 relative z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -111,7 +111,7 @@ export default function Models() {
             <div className="order-1 lg:order-2">
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
                     Choose Your{' '}
-                    <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-cherry-500 to-rose-400 bg-clip-text text-transparent">
                         AI Intelligence
                     </span>
                 </h2>
@@ -125,7 +125,7 @@ export default function Models() {
                     <Button
                     key={f.value}
                     variant={filter === f.value ? 'default' : 'outline'}
-                    className={`rounded-full ${filter === f.value ? 'bg-blue-600 hover:bg-blue-700' : 'border-dark-border hover:bg-dark-bg/50'}`}
+                    className={`rounded-full ${filter === f.value ? 'bg-cherry-600 hover:bg-cherry-700' : 'border-dark-border hover:bg-dark-bg/50'}`}
                     onClick={() => setFilter(f.value)}
                     >
                     {f.label}
@@ -140,14 +140,14 @@ export default function Models() {
                     const performanceColor = performanceColors[model.performance];
 
                     return (
-                        <div key={model.id} className="metallic-card p-5 rounded-xl hover:border-blue-500/40 transition-all bg-dark-bg/60 backdrop-blur-sm">
+                        <div key={model.id} className="metallic-card p-5 rounded-xl hover:border-cherry-500/40 transition-all bg-dark-bg/60 backdrop-blur-sm">
                             <div className="flex items-center gap-3 mb-3">
                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${performanceColor}`}>
                                     <PerformanceIcon className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="text-base font-bold text-white">{model.name}</h3>
-                                    <p className="text-xs text-blue-400">{model.provider}</p>
+                                    <p className="text-xs text-cherry-400">{model.provider}</p>
                                 </div>
                             </div>
                             <p className="text-xs text-gray-400 line-clamp-2">{model.description}</p>

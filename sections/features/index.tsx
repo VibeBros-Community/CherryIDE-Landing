@@ -76,7 +76,7 @@ function Features3D() {
 
 export default function Features() {
   return (
-    <section id="features" className="py-20 relative overflow-hidden bg-gradient-to-b from-black via-[#0a0000] to-black">
+    <section id="features" className="py-20 relative overflow-hidden bg-[#0d0d0d]">
       <div className="container mx-auto px-4 relative z-10">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
