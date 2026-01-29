@@ -43,7 +43,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative w-8 h-8 transition-transform group-hover:scale-110">
               <Image
-                src="/images/logo.png"
+                src="/images/logo-transparent.png"
                 alt="Cherry IDE"
                 fill
                 className="object-contain"

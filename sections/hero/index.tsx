@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useMemo, useEffect } from 'react';
-import { View, Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls } from '@react-three/drei';
+import { View, Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls, Text, Center, useTexture, Decal } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -34,34 +34,79 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
 
   return (
     <group ref={ref}>
-        {/* Core Icosahedron */}
+        {/* Core Icosahedron - Gem-like */}
         <mesh>
             <icosahedronGeometry args={[2, 0]} />
             <MeshTransmissionMaterial
                 backside
-                samples={4}
-                thickness={0.5}
-                roughness={0.2}
-                anisotropy={1}
-                chromaticAberration={0.1}
+                samples={8} // Increased quality
+                thickness={0.8} // Thicker glass
+                roughness={0.1}
+                anisotropy={1.5} // High anisotropy for gem look
+                chromaticAberration={0.3} // More rainbow edges
                 color="#ff0f39"
-                resolution={512}
+                resolution={1024}
+                distortion={0.2}
+                distortionScale={0.2}
+                temporalDistortion={0.1}
             />
         </mesh>
-        {/* Outer Ring */}
-        <mesh scale={[1.5, 1.5, 1.5]}>
-                <torusGeometry args={[2, 0.05, 16, 100]} />
-                <meshStandardMaterial color="#fff" emissive="#fff" emissiveIntensity={2} toneMapped={false} />
+        
+        {/* Outer Ring - Metallic with Cherry Gradient feel via Iridescence */}
+        <mesh scale={[1.5, 1.5, 1.5]} rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[2, 0.05, 32, 100]} />
+                <meshPhysicalMaterial 
+                    color="#1a1b1e"
+                    emissive="#ff0f39"
+                    emissiveIntensity={0.5}
+                    roughness={0.1}
+                    metalness={1}
+                    clearcoat={1}
+                    clearcoatRoughness={0}
+                    iridescence={1}
+                    iridescenceIOR={1.8}
+                    iridescenceThicknessRange={[100, 400]}
+                />
         </mesh>
+        
+        {/* Inner Ring - Thin & Bright */}
+        <mesh scale={[1.2, 1.2, 1.2]} rotation={[Math.PI / 3, Math.PI / 4, 0]}>
+             <torusGeometry args={[2, 0.02, 16, 100]} />
+             <meshBasicMaterial color="#ff0f39" toneMapped={false} />
+        </mesh>
+
         {/* Floating Particles */}
         <group rotation={[0.5, 0.5, 0]}>
             <mesh position={[3, 1, 0]}>
-                <sphereGeometry args={[0.2, 16, 16]} />
-                <meshStandardMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={2} />
+                <octahedronGeometry args={[0.3, 0]} />
+                <meshStandardMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={4} toneMapped={false} />
             </mesh>
-                <mesh position={[-3, -2, 1]}>
-                <boxGeometry args={[0.3, 0.3, 0.3]} />
-                <meshStandardMaterial color="#fff" />
+            {/* 3D Cherry Logo Shape - Constructed from primitives to match logo silhouette */}
+            <group position={[-3, -2, 1]} scale={[0.4, 0.4, 0.4]} rotation={[0, 0, 0.2]}>
+                {/* Left side arc */}
+                <mesh position={[-0.5, 0, 0]}>
+                    <torusGeometry args={[0.5, 0.15, 16, 32, Math.PI * 1.2]} />
+                    <meshPhysicalMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={0.5} roughness={0.2} metalness={0.8} />
+                </mesh>
+                {/* Right side arc */}
+                <mesh position={[0.5, 0, 0]} rotation={[0, Math.PI, 0]}>
+                    <torusGeometry args={[0.5, 0.15, 16, 32, Math.PI * 1.2]} />
+                    <meshPhysicalMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={0.5} roughness={0.2} metalness={0.8} />
+                </mesh>
+                {/* Center Core */}
+                <mesh position={[0, -0.1, 0]}>
+                    <sphereGeometry args={[0.4, 32, 32]} />
+                    <meshPhysicalMaterial color="#ff0f39" roughness={0.1} metalness={0.5} clearcoat={1} />
+                </mesh>
+                {/* Stem */}
+                <mesh position={[0.1, 0.6, 0]} rotation={[0, 0, -0.5]}>
+                    <cylinderGeometry args={[0.08, 0.05, 0.8, 16]} />
+                    <meshPhysicalMaterial color="#ff0f39" />
+                </mesh>
+            </group>
+            <mesh position={[1, 3, -1]}>
+                <boxGeometry args={[0.2, 0.2, 0.2]} />
+                <meshStandardMaterial color="#ff0f39" />
             </mesh>
         </group>
     </group>
@@ -70,6 +115,8 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
 
 function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> }) {
     const ref = useRef<THREE.Group>(null);
+    const codeGroupRef = useRef<THREE.Group>(null);
+    const popupRef = useRef<THREE.Group>(null);
 
     useFrame((state, delta) => {
         if (ref.current) {
@@ -78,75 +125,148 @@ function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> 
             const t = transition; // 0 -> 1
             const smoothT = THREE.MathUtils.smoothstep(t, 0, 1);
             
-            ref.current.scale.setScalar(smoothT * 0.8);
+            ref.current.scale.setScalar(smoothT * 1.0);
             
             // Tilt effect based on mouse (optional, keeping it simple for now)
             ref.current.rotation.y = THREE.MathUtils.lerp(Math.PI, 0, smoothT) + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+        }
+
+        // Animate Code Lines (Typing effect)
+        if (codeGroupRef.current) {
+            codeGroupRef.current.children.forEach((child, i) => {
+                const time = state.clock.elapsedTime;
+                
+                // Get the code content mesh (2nd child of the group)
+                const contentMesh = child.children[1] as THREE.Mesh;
+                
+                if(contentMesh) {
+                     // 1. Typing / Length animation
+                     // Animate scale.x to simulate typing from left to right
+                     // Stagger based on line index (i)
+                     const loopTime = (time * 2 + i * 0.5) % 10; // Loop every 10s
+                     if (loopTime < 1) {
+                         // Type out phase
+                         contentMesh.scale.x = THREE.MathUtils.lerp(0.1, 1, loopTime);
+                         contentMesh.visible = true;
+                     } else if (loopTime > 8) {
+                         // Delete phase
+                         contentMesh.visible = false;
+                     } else {
+                         // Static phase
+                         contentMesh.scale.x = 1;
+                         contentMesh.visible = true;
+                     }
+
+                     // 2. Pulse brightness for highlighted lines
+                     if (contentMesh.material instanceof THREE.MeshStandardMaterial && contentMesh.material.emissive.r > 0) {
+                          contentMesh.material.emissiveIntensity = 0.8 + Math.sin(time * 5) * 0.5;
+                     }
+                }
+            });
+        }
+
+        // Animate Popup (Float up and down)
+        if (popupRef.current) {
+            popupRef.current.position.y = -0.2 + Math.sin(state.clock.elapsedTime * 2) * 0.05;
         }
     });
 
     return (
         <group ref={ref} scale={[0,0,0]}>
-             {/* Window Frame */}
-             <RoundedBox args={[4, 2.8, 0.2]} radius={0.1} smoothness={4}>
+             {/* Window Frame - High Polish Metallic */}
+             <RoundedBox args={[4, 2.8, 0.2]} radius={0.15} smoothness={4}>
                 <meshPhysicalMaterial 
-                    color="#1a1b1e" 
+                    color="#0a0a0a" 
                     roughness={0.2} 
-                    metalness={0.8}
+                    metalness={0.9}
                     clearcoat={1}
+                    clearcoatRoughness={0.1}
                 />
             </RoundedBox>
             
-            {/* Screen Content - Dark Glass */}
-            <mesh position={[0, 0, 0.11]}>
+            {/* Screen Content - Separated Layer */}
+            <mesh position={[0, 0, 0.15]}>
                 <planeGeometry args={[3.8, 2.6]} />
-                <meshBasicMaterial color="#000" />
+                <meshPhysicalMaterial 
+                    color="#050505" 
+                    roughness={0.2}
+                    metalness={0.5}
+                />
             </mesh>
 
-            {/* UI Header */}
-            <mesh position={[0, 1.2, 0.12]}>
+            {/* UI Header - Separated */}
+            <mesh position={[0, 1.2, 0.2]}>
                  <planeGeometry args={[3.8, 0.2]} />
-                 <meshBasicMaterial color="#333" />
+                 <meshBasicMaterial color="#1a1b1e" />
             </mesh>
-            {/* Traffic Lights */}
-            <group position={[-1.7, 1.2, 0.13]}>
+            {/* Traffic Lights - Pop out */}
+            <group position={[-1.7, 1.2, 0.22]} rotation={[Math.PI/2, 0, 0]}>
                 <mesh position={[0, 0, 0]}>
-                    <circleGeometry args={[0.05, 16]} />
+                    <cylinderGeometry args={[0.06, 0.06, 0.05, 32]} />
                     <meshBasicMaterial color="#ff5f56" />
                 </mesh>
-                <mesh position={[0.15, 0, 0]}>
-                    <circleGeometry args={[0.05, 16]} />
+                <mesh position={[0.2, 0, 0]}>
+                    <cylinderGeometry args={[0.06, 0.06, 0.05, 32]} />
                     <meshBasicMaterial color="#ffbd2e" />
                 </mesh>
-                <mesh position={[0.3, 0, 0]}>
-                    <circleGeometry args={[0.05, 16]} />
+                <mesh position={[0.4, 0, 0]}>
+                    <cylinderGeometry args={[0.06, 0.06, 0.05, 32]} />
                     <meshBasicMaterial color="#27c93f" />
                 </mesh>
             </group>
 
-            {/* Code Lines - Glowing */}
-            <group position={[-1.6, 0.8, 0.12]}>
-                 {Array.from({ length: 8 }).map((_, i) => (
-                    <mesh key={i} position={[0, -i * 0.25, 0]} scale={[1 + Math.random(), 1, 1]}>
-                        <planeGeometry args={[1, 0.05]} />
-                        <meshBasicMaterial color={i === 2 || i === 5 ? "#ff0f39" : "#444"} />
-                    </mesh>
+            {/* Sidebar - Separated Layer */}
+            <mesh position={[-1.6, -0.1, 0.18]}>
+                <boxGeometry args={[0.6, 2.4, 0.02]} />
+                <meshStandardMaterial color="#111" />
+            </mesh>
+
+            {/* Code Lines - Floating above screen */}
+            <group position={[-0.8, 0.8, 0.2]} ref={codeGroupRef}>
+                 {Array.from({ length: 10 }).map((_, i) => (
+                    <group key={i} position={[0, -i * 0.22, 0]}>
+                        {/* Line number */}
+                        <mesh position={[-0.3, 0, 0]}>
+                             <boxGeometry args={[0.1, 0.05, 0.02]} />
+                             <meshBasicMaterial color="#333" />
+                        </mesh>
+                        {/* Code content */}
+                        <mesh position={[0.5 + Math.random() * 0.5, 0, 0]}>
+                            <boxGeometry args={[1 + Math.random() * 1.5, 0.08, 0.02]} />
+                            <meshStandardMaterial 
+                                color={i === 2 || i === 5 || i === 8 ? "#ff0f39" : "#4a4a4a"} 
+                                toneMapped={false}
+                                emissive={i === 2 || i === 5 || i === 8 ? "#ff0f39" : "#000"}
+                                emissiveIntensity={0.5}
+                            />
+                        </mesh>
+                    </group>
                 ))}
             </group>
 
-            {/* Floating Elements (Suggestions) */}
-             <group position={[1, 0, 0.3]} rotation={[0, -0.2, 0]}>
-                 <RoundedBox args={[1.5, 0.8, 0.05]} radius={0.05}>
-                     <meshBasicMaterial color="#222" />
+            {/* Floating Suggestions / IntelliSense Popup - Highly Separated */}
+             <group position={[1, -0.2, 0.6]} rotation={[0, -0.15, 0]} ref={popupRef}>
+                 <RoundedBox args={[1.4, 1.2, 0.05]} radius={0.05} smoothness={2}>
+                     <meshPhysicalMaterial 
+                        color="#1a1b1e"
+                        roughness={0.3}
+                        metalness={0.8}
+                        emissive="#1a1b1e"
+                        emissiveIntensity={0.2}
+                     />
                  </RoundedBox>
-                 <mesh position={[-0.5, 0.1, 0.06]}>
-                     <planeGeometry args={[0.8, 0.05]} />
-                     <meshBasicMaterial color="#ff0f39" />
+                 {/* Selection Highlight */}
+                 <mesh position={[0, 0.3, 0.04]}>
+                     <boxGeometry args={[1.2, 0.15, 0.01]} />
+                     <meshBasicMaterial color="#ff0f39" transparent opacity={0.3} />
                  </mesh>
-                 <mesh position={[-0.4, -0.1, 0.06]}>
-                     <planeGeometry args={[1, 0.03]} />
-                     <meshBasicMaterial color="#666" />
-                 </mesh>
+                 {/* Suggestion Text Lines */}
+                 {Array.from({ length: 5 }).map((_, i) => (
+                     <mesh key={i} position={[-0.2, 0.3 - i * 0.2, 0.06]}>
+                         <boxGeometry args={[0.8, 0.08, 0.01]} />
+                         <meshBasicMaterial color={i === 0 ? "#fff" : "#666"} />
+                     </mesh>
+                 ))}
              </group>
         </group>
     )
