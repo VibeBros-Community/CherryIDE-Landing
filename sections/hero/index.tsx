@@ -218,57 +218,107 @@ function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> 
     const ref = useRef<THREE.Group>(null);
     const codeGroupRef = useRef<THREE.Group>(null);
     const popupRef = useRef<THREE.Group>(null);
+    const cursorRef = useRef<THREE.Mesh>(null);
 
     useFrame((state, delta) => {
         if (ref.current) {
             const transition = transitionRef.current;
-            // Gentle float handled by <Float> parent, but here we handle entry
-            const t = transition; // 0 -> 1
-            const smoothT = THREE.MathUtils.smoothstep(t, 0, 1);
-            
+            const smoothT = THREE.MathUtils.smoothstep(transition, 0, 1);
             ref.current.scale.setScalar(smoothT * 1.0);
-            
-            // Tilt effect based on mouse (optional, keeping it simple for now)
             ref.current.rotation.y = THREE.MathUtils.lerp(Math.PI, 0, smoothT) + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
         }
 
-        // Animate Code Lines (Typing effect)
-        if (codeGroupRef.current) {
-            codeGroupRef.current.children.forEach((child, i) => {
-                const time = state.clock.elapsedTime;
-                
-                // Get the code content mesh (2nd child of the group)
-                const contentMesh = child.children[1] as THREE.Mesh;
-                
-                if(contentMesh) {
-                     // 1. Typing / Length animation
-                     // Animate scale.x to simulate typing from left to right
-                     // Stagger based on line index (i)
-                     const loopTime = (time * 2 + i * 0.5) % 10; // Loop every 10s
-                     if (loopTime < 1) {
-                         // Type out phase
-                         contentMesh.scale.x = THREE.MathUtils.lerp(0.1, 1, loopTime);
-                         contentMesh.visible = true;
-                     } else if (loopTime > 8) {
-                         // Delete phase
-                         contentMesh.visible = false;
-                     } else {
-                         // Static phase
-                         contentMesh.scale.x = 1;
-                         contentMesh.visible = true;
-                     }
+        const time = state.clock.elapsedTime;
 
-                     // 2. Pulse brightness for highlighted lines
-                     if (contentMesh.material instanceof THREE.MeshStandardMaterial && contentMesh.material.emissive.r > 0) {
-                          contentMesh.material.emissiveIntensity = 0.8 + Math.sin(time * 5) * 0.5;
-                     }
+        // Multi-layer dynamic animation
+        if (codeGroupRef.current && codeGroupRef.current.children) {
+            codeGroupRef.current.children.forEach((child, i) => {
+                if (!child || !child.children || child.children.length < 2) return;
+
+                const contentMesh = child.children[1] as THREE.Mesh;
+                if (!contentMesh || !contentMesh.material) return;
+
+                // Layer 1: Wave pattern for width
+                const wavePhase = (time * 2 + i * 0.4) % 8;
+                if (wavePhase < 1) {
+                    contentMesh.scale.x = THREE.MathUtils.smoothstep(wavePhase, 0, 1);
+                } else if (wavePhase > 6) {
+                    contentMesh.scale.x = THREE.MathUtils.smoothstep(8 - wavePhase, 0, 1);
+                } else {
+                    contentMesh.scale.x = 1;
+                }
+                contentMesh.visible = wavePhase < 7;
+
+                if (contentMesh.material instanceof THREE.MeshStandardMaterial) {
+                    // Layer 2: Traveling highlight wave
+                    const highlightWave = Math.sin(time * 3 - i * 0.5) * 0.5 + 0.5;
+
+                    // Layer 3: Focus pulse on important lines
+                    const focusPulse = (i === 2 || i === 5 || i === 8) ?
+                        Math.sin(time * 4) * 0.3 + 0.7 : 0.4;
+
+                    // Layer 4: Random flicker for active coding feel
+                    const flicker = Math.sin(time * 20 + i * 3) * 0.05 + 0.95;
+
+                    // Combine effects
+                    const baseIntensity = contentMesh.material.emissive.r > 0.5 ? 0.8 : 0.4;
+                    contentMesh.material.emissiveIntensity =
+                        (baseIntensity + highlightWave * 0.3 + focusPulse * 0.2) * flicker;
+
+                    // Layer 5: Position jitter for active feel
+                    contentMesh.position.x = Math.sin(time * 5 + i) * 0.005;
                 }
             });
         }
 
-        // Animate Popup (Float up and down)
+        // Dynamic cursor with multiple behaviors
+        if (cursorRef.current) {
+            // Moves through lines
+            const lineProgress = (time * 1.2) % 10;
+            const currentLine = Math.floor(lineProgress);
+            const lineFraction = lineProgress - currentLine;
+
+            // Smooth line transitions
+            cursorRef.current.position.y = 0.8 - lineProgress * 0.22;
+
+            // Cursor moves horizontally as if typing
+            cursorRef.current.position.x = -0.5 + lineFraction * 1.8;
+
+            // Fast blink
+            const blinkPhase = (time * 3) % 1;
+            cursorRef.current.visible = blinkPhase < 0.5;
+
+            // Cursor intensity pulse
+            if (cursorRef.current.material instanceof THREE.MeshBasicMaterial) {
+                const intensity = 0.8 + Math.sin(time * 6) * 0.2;
+                cursorRef.current.scale.y = 0.1 * (0.8 + intensity * 0.4);
+            }
+        }
+
+        // Always visible popup with dynamic suggestions
         if (popupRef.current) {
-            popupRef.current.position.y = -0.2 + Math.sin(state.clock.elapsedTime * 2) * 0.05;
+            popupRef.current.visible = true;
+
+            // Complex float pattern
+            popupRef.current.position.y = -0.2 +
+                Math.sin(time * 1.5) * 0.04 +
+                Math.sin(time * 3) * 0.02;
+
+            // Subtle rotation sway
+            popupRef.current.rotation.y = -0.15 + Math.sin(time * 2) * 0.05;
+
+            // Scale pulse when cursor hits specific lines
+            const activePulse = ((time * 1.2) % 10) < 0.3 ? 1 + Math.sin(time * 10) * 0.04 : 1;
+            popupRef.current.scale.setScalar(activePulse);
+
+            // Animate suggestion selection cycling
+            if (popupRef.current.children && popupRef.current.children.length > 1) {
+                const selectionHighlight = popupRef.current.children[1];
+                if (selectionHighlight) {
+                    const suggestionCycle = Math.floor((time * 2) % 5);
+                    selectionHighlight.position.y = 0.3 - suggestionCycle * 0.2;
+                }
+            }
         }
     });
 
@@ -322,50 +372,67 @@ function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> 
                 <meshStandardMaterial color="#111" />
             </mesh>
 
-            {/* Code Lines - Floating above screen */}
+            {/* Code Lines - Brighter and more visible */}
             <group position={[-0.8, 0.8, 0.2]} ref={codeGroupRef}>
-                 {Array.from({ length: 10 }).map((_, i) => (
-                    <group key={i} position={[0, -i * 0.22, 0]}>
-                        {/* Line number */}
-                        <mesh position={[-0.3, 0, 0]}>
-                             <boxGeometry args={[0.1, 0.05, 0.02]} />
-                             <meshBasicMaterial color="#333" />
-                        </mesh>
-                        {/* Code content */}
-                        <mesh position={[0.5 + Math.random() * 0.5, 0, 0]}>
-                            <boxGeometry args={[1 + Math.random() * 1.5, 0.08, 0.02]} />
-                            <meshStandardMaterial 
-                                color={i === 2 || i === 5 || i === 8 ? "#ff0f39" : "#4a4a4a"} 
-                                toneMapped={false}
-                                emissive={i === 2 || i === 5 || i === 8 ? "#ff0f39" : "#000"}
-                                emissiveIntensity={0.5}
-                            />
-                        </mesh>
-                    </group>
-                ))}
+                 {Array.from({ length: 10 }).map((_, i) => {
+                    // Predefined widths for consistency
+                    const widths = [1.8, 1.5, 2.0, 1.3, 1.6, 2.2, 1.4, 1.7, 1.9, 1.2];
+                    const positions = [0.6, 0.5, 0.7, 0.4, 0.55, 0.8, 0.45, 0.6, 0.65, 0.5];
+
+                    return (
+                        <group key={i} position={[0, -i * 0.22, 0]}>
+                            {/* Line number - brighter */}
+                            <mesh position={[-0.3, 0, 0]}>
+                                 <boxGeometry args={[0.1, 0.05, 0.02]} />
+                                 <meshBasicMaterial color="#666" />
+                            </mesh>
+                            {/* Code content - brighter colors */}
+                            <mesh position={[positions[i], 0, 0]}>
+                                <boxGeometry args={[widths[i], 0.08, 0.02]} />
+                                <meshStandardMaterial
+                                    color={i === 2 || i === 5 || i === 8 ? "#ff4466" : "#99aacc"}
+                                    toneMapped={false}
+                                    emissive={i === 2 || i === 5 || i === 8 ? "#ff4466" : "#4466aa"}
+                                    emissiveIntensity={i === 2 || i === 5 || i === 8 ? 0.6 : 0.3}
+                                />
+                            </mesh>
+                        </group>
+                    );
+                 })}
             </group>
 
-            {/* Floating Suggestions / IntelliSense Popup - Highly Separated */}
+            {/* Cursor - blinking */}
+            <mesh ref={cursorRef} position={[-0.5, 0.8, 0.22]}>
+                <boxGeometry args={[0.02, 0.1, 0.01]} />
+                <meshBasicMaterial color="#ffffff" toneMapped={false} />
+            </mesh>
+
+            {/* Autocomplete Popup - Enhanced */}
              <group position={[1, -0.2, 0.6]} rotation={[0, -0.15, 0]} ref={popupRef}>
                  <RoundedBox args={[1.4, 1.2, 0.05]} radius={0.05} smoothness={2}>
-                     <meshPhysicalMaterial 
+                     <meshPhysicalMaterial
                         color="#1a1b1e"
                         roughness={0.3}
                         metalness={0.8}
-                        emissive="#1a1b1e"
-                        emissiveIntensity={0.2}
+                        emissive="#2a2b2e"
+                        emissiveIntensity={0.3}
                      />
                  </RoundedBox>
-                 {/* Selection Highlight */}
+                 {/* Selection Highlight - brighter */}
                  <mesh position={[0, 0.3, 0.04]}>
                      <boxGeometry args={[1.2, 0.15, 0.01]} />
-                     <meshBasicMaterial color="#ff0f39" transparent opacity={0.3} />
+                     <meshBasicMaterial color="#ff4466" transparent opacity={0.4} toneMapped={false} />
                  </mesh>
-                 {/* Suggestion Text Lines */}
+                 {/* Suggestion Lines - more visible */}
                  {Array.from({ length: 5 }).map((_, i) => (
                      <mesh key={i} position={[-0.2, 0.3 - i * 0.2, 0.06]}>
                          <boxGeometry args={[0.8, 0.08, 0.01]} />
-                         <meshBasicMaterial color={i === 0 ? "#fff" : "#666"} />
+                         <meshStandardMaterial
+                            color={i === 0 ? "#ffffff" : "#8899aa"}
+                            emissive={i === 0 ? "#ffffff" : "#445566"}
+                            emissiveIntensity={i === 0 ? 0.3 : 0.1}
+                            toneMapped={false}
+                         />
                      </mesh>
                  ))}
              </group>
