@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useMemo, useEffect } from 'react';
-import { View, Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls, Text, Center, useTexture, Decal } from '@react-three/drei';
+import { View, Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -11,7 +11,73 @@ import * as THREE from 'three';
 
 function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<number> }) {
   const ref = useRef<THREE.Group>(null);
-  
+
+  // Create 3D Cherry Logo - accurate 1:1 copy
+  const cherryLogoGeometry = useMemo(() => {
+    // Main outer shape - cherry with connected outer curves
+    const outerShape = new THREE.Shape();
+
+    // Left side - start from top left
+    outerShape.moveTo(-0.1, 0.22);
+
+    // Left outer curve - thick C-shape wrapping around
+    outerShape.bezierCurveTo(-0.25, 0.2, -0.4, 0.15, -0.48, 0.0);
+    outerShape.bezierCurveTo(-0.54, -0.15, -0.54, -0.35, -0.48, -0.48);
+
+    // Left bottom curve - rounded lobe
+    outerShape.bezierCurveTo(-0.42, -0.56, -0.28, -0.62, -0.12, -0.6);
+
+    // Bottom center - slight dip for double-lobe cherry shape
+    outerShape.bezierCurveTo(-0.04, -0.59, 0.04, -0.59, 0.12, -0.6);
+
+    // Right bottom curve - rounded lobe
+    outerShape.bezierCurveTo(0.28, -0.62, 0.42, -0.56, 0.48, -0.48);
+
+    // Right outer curve
+    outerShape.bezierCurveTo(0.54, -0.35, 0.54, -0.15, 0.48, 0.0);
+    outerShape.bezierCurveTo(0.4, 0.15, 0.25, 0.2, 0.1, 0.22);
+
+    // Top dip where stem connects
+    outerShape.bezierCurveTo(0.05, 0.18, -0.05, 0.18, -0.1, 0.22);
+
+    // Create crescent-shaped gaps - smooth inner curves
+    const leftGap = new THREE.Path();
+    // Outer edge of gap
+    leftGap.moveTo(-0.15, 0.16);
+    leftGap.bezierCurveTo(-0.28, 0.13, -0.38, 0.05, -0.42, -0.08);
+    leftGap.bezierCurveTo(-0.45, -0.23, -0.44, -0.39, -0.38, -0.49);
+    leftGap.bezierCurveTo(-0.33, -0.52, -0.24, -0.53, -0.16, -0.50);
+    // Inner edge of gap - smooth flowing curve
+    leftGap.bezierCurveTo(-0.17, -0.42, -0.17, -0.32, -0.17, -0.22);
+    leftGap.bezierCurveTo(-0.17, -0.10, -0.16, 0.02, -0.15, 0.10);
+    leftGap.bezierCurveTo(-0.15, 0.13, -0.15, 0.15, -0.15, 0.16);
+
+    const rightGap = new THREE.Path();
+    // Outer edge of gap
+    rightGap.moveTo(0.15, 0.16);
+    rightGap.bezierCurveTo(0.28, 0.13, 0.38, 0.05, 0.42, -0.08);
+    rightGap.bezierCurveTo(0.45, -0.23, 0.44, -0.39, 0.38, -0.49);
+    rightGap.bezierCurveTo(0.33, -0.52, 0.24, -0.53, 0.16, -0.50);
+    // Inner edge of gap - smooth flowing curve
+    rightGap.bezierCurveTo(0.17, -0.42, 0.17, -0.32, 0.17, -0.22);
+    rightGap.bezierCurveTo(0.17, -0.10, 0.16, 0.02, 0.15, 0.10);
+    rightGap.bezierCurveTo(0.15, 0.13, 0.15, 0.15, 0.15, 0.16);
+
+    outerShape.holes.push(leftGap, rightGap);
+
+    const extrudeSettings = {
+      steps: 8,
+      depth: 0.18,
+      bevelEnabled: true,
+      bevelThickness: 0.07,  // Thicker bevel for more roundness
+      bevelSize: 0.06,       // Bigger bevel for more curve
+      bevelSegments: 24,     // Very smooth edges
+      curveSegments: 48      // Very smooth curves
+    };
+
+    return new THREE.ExtrudeGeometry(outerShape, extrudeSettings);
+  }, []);
+
   useFrame((state, delta) => {
     if (ref.current) {
         const transition = transitionRef.current;
@@ -77,36 +143,71 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
 
         {/* Floating Particles */}
         <group rotation={[0.5, 0.5, 0]}>
-            <mesh position={[3, 1, 0]}>
-                <octahedronGeometry args={[0.3, 0]} />
-                <meshStandardMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={4} toneMapped={false} />
+            {/* Mini black crystal */}
+            <mesh position={[3, 1, 0]} rotation={[0.3, 0.5, 0]}>
+                <icosahedronGeometry args={[0.25, 0]} />
+                <meshPhysicalMaterial
+                    color="#0a0a0a"
+                    metalness={0.9}
+                    roughness={0.1}
+                    clearcoat={1}
+                    clearcoatRoughness={0}
+                />
             </mesh>
-            {/* 3D Cherry Logo Shape - Constructed from primitives to match logo silhouette */}
-            <group position={[-3, -2, 1]} scale={[0.4, 0.4, 0.4]} rotation={[0, 0, 0.2]}>
-                {/* Left side arc */}
-                <mesh position={[-0.5, 0, 0]}>
-                    <torusGeometry args={[0.5, 0.15, 16, 32, Math.PI * 1.2]} />
-                    <meshPhysicalMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={0.5} roughness={0.2} metalness={0.8} />
+            {/* 3D Cherry Logo - Unified shape with gaps */}
+            <group position={[-3, -2, 1]} rotation={[0.15, -0.3, 0.2]} scale={[0.68, 0.7, 0.7]}>
+                {/* Main logo body - one piece with cutouts */}
+                <mesh geometry={cherryLogoGeometry}>
+                    <meshPhysicalMaterial
+                        color="#ff0f39"
+                        emissive="#ff0f39"
+                        emissiveIntensity={0.3}
+                        metalness={0.6}
+                        roughness={0.2}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                    />
                 </mesh>
-                {/* Right side arc */}
-                <mesh position={[0.5, 0, 0]} rotation={[0, Math.PI, 0]}>
-                    <torusGeometry args={[0.5, 0.15, 16, 32, Math.PI * 1.2]} />
-                    <meshPhysicalMaterial color="#ff0f39" emissive="#ff0f39" emissiveIntensity={0.5} roughness={0.2} metalness={0.8} />
+
+                {/* Stem - single smooth curve matching logo */}
+                <mesh position={[0.02, 0.28, 0.09]} rotation={[0, 0, -0.35]}>
+                    <cylinderGeometry args={[0.032, 0.048, 0.42, 64]} />
+                    <meshPhysicalMaterial
+                        color="#ff0f39"
+                        metalness={0.5}
+                        roughness={0.2}
+                    />
                 </mesh>
-                {/* Center Core */}
-                <mesh position={[0, -0.1, 0]}>
-                    <sphereGeometry args={[0.4, 32, 32]} />
-                    <meshPhysicalMaterial color="#ff0f39" roughness={0.1} metalness={0.5} clearcoat={1} />
+
+                {/* Stem upper curve */}
+                <mesh position={[0.12, 0.48, 0.09]} rotation={[0, 0, -0.65]}>
+                    <cylinderGeometry args={[0.025, 0.032, 0.18, 64]} />
+                    <meshPhysicalMaterial
+                        color="#ff0f39"
+                        metalness={0.5}
+                        roughness={0.2}
+                    />
                 </mesh>
-                {/* Stem */}
-                <mesh position={[0.1, 0.6, 0]} rotation={[0, 0, -0.5]}>
-                    <cylinderGeometry args={[0.08, 0.05, 0.8, 16]} />
-                    <meshPhysicalMaterial color="#ff0f39" />
+
+                {/* Stem tip - rounded */}
+                <mesh position={[0.2, 0.58, 0.09]}>
+                    <sphereGeometry args={[0.025, 32, 32]} />
+                    <meshPhysicalMaterial
+                        color="#ff0f39"
+                        metalness={0.5}
+                        roughness={0.2}
+                    />
                 </mesh>
             </group>
+            {/* Small ball */}
             <mesh position={[1, 3, -1]}>
-                <boxGeometry args={[0.2, 0.2, 0.2]} />
-                <meshStandardMaterial color="#ff0f39" />
+                <sphereGeometry args={[0.15, 32, 32]} />
+                <meshPhysicalMaterial
+                    color="#ff0f39"
+                    metalness={0.7}
+                    roughness={0.2}
+                    clearcoat={1}
+                />
             </mesh>
         </group>
     </group>
