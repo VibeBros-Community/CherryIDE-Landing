@@ -18,36 +18,38 @@ const features = [
 
 export default function PricingPreview() {
   return (
-    <section id="pricing" className="py-20 bg-[#0d0d0d] relative overflow-hidden">
+    <section id="pricing" className="py-24 bg-[#0d0d0d] relative overflow-hidden">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cherry-500/5 via-transparent to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
 
           {/* CTA Content (Left) */}
-          <div className="order-1">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              Ready to Code with{' '}
-              <span className="bg-gradient-to-r from-cherry-500 to-rose-400 bg-clip-text text-transparent">
-                AI Freedom
-              </span>
-              ?
-            </h2>
+          <div className="order-1 flex flex-col justify-center">
+            <div className="mb-8">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1]">
+                Ready to Code with{' '}
+                <span className="bg-gradient-to-r from-cherry-500 to-rose-400 bg-clip-text text-transparent">
+                  AI Freedom
+                </span>
+                ?
+              </h2>
 
-            <p className="text-xl text-gray-300 mb-8">
-              Join thousands of developers using Cherry IDE. Download now and experience the power of open-source AI.
-            </p>
+              <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
+                Join thousands of developers using Cherry IDE. Download now and experience the power of open-source AI—completely free, forever.
+              </p>
+            </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <Button size="xl" className="group min-w-[200px]">
+            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <Button size="xl" className="group shadow-lg shadow-cherry-500/20">
                 <Download className="w-5 h-5" />
                 Download Now
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button size="xl" variant="outline" asChild className="min-w-[200px] border-dark-border">
+              <Button size="xl" variant="outline" asChild className="border-white/10 hover:bg-white/5">
                 <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer">
                   <Github className="w-5 h-5" />
                   Star on GitHub
@@ -55,59 +57,62 @@ export default function PricingPreview() {
               </Button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6">
-              <div>
-                <div className="text-3xl font-bold text-cherry-500 mb-1">15+</div>
-                <div className="text-sm text-gray-400">AI Models</div>
+            {/* Stats - Better spacing */}
+            <div className="grid grid-cols-3 gap-8 pt-8 border-t border-white/5">
+              <div className="text-center sm:text-left">
+                <div className="text-4xl font-bold text-cherry-500 mb-2">15+</div>
+                <div className="text-sm text-gray-400 uppercase tracking-wide">AI Models</div>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-cherry-500 mb-1">100%</div>
-                <div className="text-sm text-gray-400">Open Source</div>
+              <div className="text-center sm:text-left">
+                <div className="text-4xl font-bold text-cherry-500 mb-2">100%</div>
+                <div className="text-sm text-gray-400 uppercase tracking-wide">Open Source</div>
               </div>
-              <div>
-                <div className="text-3xl font-bold text-cherry-500 mb-1">$0</div>
-                <div className="text-sm text-gray-400">Forever</div>
+              <div className="text-center sm:text-left">
+                <div className="text-4xl font-bold text-cherry-500 mb-2">$0</div>
+                <div className="text-sm text-gray-400 uppercase tracking-wide">Forever</div>
               </div>
             </div>
           </div>
 
           {/* Pricing Card (Right) */}
-          <div className="order-2">
-            <Card className="border-2 border-cherry-500/20 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
-              <CardHeader className="text-center pb-6">
+          <div className="order-2 flex flex-col justify-center">
+            <Card className="border-2 border-cherry-500/30 bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] shadow-2xl shadow-cherry-500/10">
+              <CardHeader className="text-center pb-8">
                 <div className="mb-4">
-                  <span className="inline-block px-4 py-2 bg-cherry-500/10 text-cherry-500 rounded-full text-sm font-semibold">
+                  <span className="inline-block px-4 py-2 bg-cherry-500/10 text-cherry-500 rounded-full text-sm font-bold tracking-wide">
                     OPEN-SOURCE
                   </span>
                 </div>
-                <CardTitle className="text-3xl mb-2">
-                  <span className="text-5xl font-bold text-white">$0</span>
-                  <span className="text-gray-400 text-xl">/forever</span>
+                <CardTitle className="mb-3">
+                  <div className="text-6xl md:text-7xl font-bold text-white mb-2">$0</div>
+                  <div className="text-gray-400 text-xl font-normal">/forever</div>
                 </CardTitle>
-                <CardDescription className="text-base">
-                  Everything included. No limitations.
+                <CardDescription className="text-base text-gray-300">
+                  Everything included. No limitations. No subscriptions.
                 </CardDescription>
               </CardHeader>
 
-              <CardContent>
-                <ul className="space-y-3">
+              <CardContent className="pb-8">
+                <ul className="space-y-4">
                   {features.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <Check className="w-5 h-5 text-cherry-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-300 text-sm">{feature}</span>
+                      <div className="mt-0.5 rounded-full bg-cherry-500/10 p-1">
+                        <Check className="w-4 h-4 text-cherry-500" />
+                      </div>
+                      <span className="text-gray-200 text-sm leading-relaxed">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
 
-              <CardFooter className="flex flex-col gap-3 pt-6">
-                <Button size="lg" className="w-full group">
-                  <Download className="w-4 h-4" />
+              <CardFooter className="flex flex-col gap-4 pt-6 border-t border-white/5">
+                <Button size="xl" className="w-full group shadow-lg shadow-cherry-500/20">
+                  <Download className="w-5 h-5" />
                   Download Cherry IDE
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </Button>
                 <p className="text-center text-xs text-gray-400">
-                  Windows, macOS, and Linux
+                  Available for Windows, macOS, and Linux
                 </p>
               </CardFooter>
             </Card>
@@ -115,11 +120,12 @@ export default function PricingPreview() {
             {/* Support Links */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-400">
-                <a href={siteConfig.links.github} className="text-cherry-500 hover:text-cherry-400 underline">
-                  Sponsor
+                Want to support the project?{' '}
+                <a href={siteConfig.links.github} className="text-cherry-500 hover:text-cherry-400 underline transition-colors">
+                  Sponsor on GitHub
                 </a>
-                {' · '}
-                <a href={siteConfig.links.github} className="text-cherry-500 hover:text-cherry-400 underline">
+                {' or '}
+                <a href={siteConfig.links.github} className="text-cherry-500 hover:text-cherry-400 underline transition-colors">
                   Contribute
                 </a>
               </p>
