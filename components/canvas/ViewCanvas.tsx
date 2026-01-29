@@ -12,8 +12,8 @@ export default function ViewCanvas() {
         left: 0,
         width: '100%',
         height: '100%',
-        pointerEvents: 'none',
-        zIndex: 30, // Be in front of text (for the 3D content, which is managed via View)
+        pointerEvents: 'none', // Allow clicks to pass through to DOM elements below
+        zIndex: 30, 
       }}
       eventSource={document.body}
       shadows

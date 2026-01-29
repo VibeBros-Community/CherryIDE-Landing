@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState, useMemo } from 'react';
-import { View, Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox } from '@react-three/drei';
+import { useRef, useState, useMemo, useEffect } from 'react';
+import { View, Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -154,7 +154,7 @@ function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> 
 
 function Hero3D() {
   const transitionRef = useRef(0); // 0 = Crystal, 1 = IDE
-
+  
   // Toggle state every 5 seconds
   useFrame((state, delta) => {
       const time = state.clock.elapsedTime;
@@ -171,10 +171,21 @@ function Hero3D() {
       <Environment preset="city" />
       {/* Move group to left to account for full-width canvas */}
       <group position={[-2.5, 0, 0]}>
-        <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-            <Crystal transitionRef={transitionRef} />
-            <IDE transitionRef={transitionRef} />
-        </Float>
+        <PresentationControls
+          global={false} // Restrict to the container
+          cursor={true}
+          snap={true}
+          speed={1.5}
+          zoom={1}
+          rotation={[0, 0, 0]}
+          polar={[-Math.PI / 4, Math.PI / 4]}
+          azimuth={[-Math.PI / 4, Math.PI / 4]}
+        >
+            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+                <Crystal transitionRef={transitionRef} />
+                <IDE transitionRef={transitionRef} />
+            </Float>
+        </PresentationControls>
       </group>
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} intensity={1} color="#ff0f39" />
@@ -184,22 +195,24 @@ function Hero3D() {
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden bg-black">
-      {/* Full-section 3D Background */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none">
+    <section 
+        className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden bg-black"
+    >
+      {/* Full-section 3D Background - High Z-index for interaction, pointer-events-auto */}
+      <div className="absolute inset-0 w-full h-full pointer-events-auto z-10">
          <View className="w-full h-full">
             <Hero3D />
          </View>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-20 pointer-events-none">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
           {/* Spacer for 3D Content (Left) */}
           <div className="hidden lg:block h-[500px] w-full order-2 lg:order-1" />
 
           {/* Text Content (Right) */}
-          <div className="order-1 lg:order-2 text-left">
+          <div className="order-1 lg:order-2 text-left pointer-events-auto">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-dark-surface/50 backdrop-blur-md border border-dark-border mb-8 animate-fade-in">
                 <span className="w-2 h-2 bg-cherry-500 rounded-full animate-pulse" />
                 <span className="text-sm text-gray-300">Open-source AI IDE • Free Forever</span>
