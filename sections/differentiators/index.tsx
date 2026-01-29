@@ -15,7 +15,12 @@ const comparisonData = [
 
 export default function Differentiators() {
   return (
-    <section id="differentiators" className="py-20 bg-[#0d0d0d] relative overflow-hidden">
+    <section id="differentiators" className="py-20 relative overflow-hidden bg-gradient-to-bl from-[#120204] via-black to-black">
+      {/* Toned down gradient overlays */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(255,15,57,0.18)_0%,_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(255,15,57,0.12)_0%,_transparent_65%)]" />
+      {/* Textured overlay */}
+      <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==')]" />
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <MotionWrapper className="mb-10">

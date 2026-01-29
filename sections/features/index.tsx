@@ -219,7 +219,7 @@ function Planet({
 }
 
 function Features3D() {
-    const threadRef = useRef<THREE.Mesh>(null);
+    const threadRef = useRef<THREE.Mesh<THREE.TubeGeometry, THREE.MeshStandardMaterial>>(null);
 
     // Planet data with cherry theme colors - 7 planets
     const planets = [
