@@ -8,6 +8,7 @@ import Models from '@/sections/models';
 import Differentiators from '@/sections/differentiators';
 import SocialProof from '@/sections/social-proof';
 import PricingPreview from '@/sections/pricing-preview';
+import FAQ from '@/sections/faq';
 
 export default function ClientHome() {
   return (
@@ -22,6 +23,7 @@ export default function ClientHome() {
         <Differentiators />
         <SocialProof />
         <PricingPreview />
+        <FAQ />
       </main>
 
       <Footer />
