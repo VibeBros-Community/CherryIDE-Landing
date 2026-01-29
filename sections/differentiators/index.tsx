@@ -15,7 +15,7 @@ const comparisonData = [
 
 export default function Differentiators() {
   return (
-    <section id="differentiators" className="py-24 bg-dark-bg relative">
+    <section id="differentiators" className="py-24 bg-[#111111] relative">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <MotionWrapper className="max-w-3xl mx-auto text-center mb-16">

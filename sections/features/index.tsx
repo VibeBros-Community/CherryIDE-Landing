@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { useRef } from 'react';
+import { View, Float, PerspectiveCamera } from '@react-three/drei';
 import { Brain, ShieldCheck, Code2, Layers, Terminal, Puzzle } from 'lucide-react';
 import { coreFeatures } from '@/config/features';
 
@@ -13,44 +14,80 @@ const iconMap = {
   'puzzle': Puzzle,
 };
 
+function Features3D() {
+    return (
+        <>
+            <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={40} />
+            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+                {/* Abstract geometric nodes representing features connecting */}
+                 <mesh position={[-2, 1, 0]}>
+                    <octahedronGeometry args={[1.2, 0]} />
+                    <meshStandardMaterial color="#333" roughness={0.1} metalness={1} wireframe />
+                 </mesh>
+                 <mesh position={[2, -1, -1]}>
+                    <dodecahedronGeometry args={[1.2, 0]} />
+                    <meshStandardMaterial color="#ff0f39" roughness={0.4} metalness={0.8} />
+                 </mesh>
+                 <mesh position={[0, 2, -2]}>
+                    <boxGeometry args={[1, 1, 1]} />
+                    <meshStandardMaterial color="#555" roughness={0.1} metalness={1} />
+                 </mesh>
+                 {/* Connecting lines could be added here later */}
+            </Float>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[-10, 0, 10]} intensity={1} color="#ff0f39" />
+        </>
+    )
+}
+
 export default function Features() {
   return (
-    <section id="features" className="py-24 bg-dark-bg relative">
+    <section id="features" className="py-24 relative overflow-hidden bg-[#111111]">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Everything You Need to Code with AI
-          </h2>
-          <p className="text-xl text-gray-400">
-            Cherry IDE combines the best open-source AI models with a powerful, privacy-focused editor.
-          </p>
-        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            
+            {/* Text Content (Left) */}
+            <div className="order-1">
+                <div className="mb-12">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                        Everything You Need <br/>
+                        <span className="text-gray-400">to Code with AI</span>
+                    </h2>
+                    <p className="text-xl text-gray-300 max-w-lg">
+                        Cherry IDE combines the best open-source AI models with a powerful, privacy-focused editor.
+                        It's built for developers who demand control.
+                    </p>
+                </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {coreFeatures.map((feature, index) => {
-            const Icon = iconMap[feature.icon as keyof typeof iconMap];
-            return (
-              <Card
-                key={feature.id}
-                className="group hover:scale-105 transition-transform duration-300"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardHeader>
-                  <div className="w-12 h-12 bg-cherry-500/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-cherry-500/20 transition-colors">
-                    <Icon className="w-6 h-6 text-cherry-500" />
-                  </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            );
-          })}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {coreFeatures.map((feature, index) => {
+                        const Icon = iconMap[feature.icon as keyof typeof iconMap];
+                        return (
+                        <div
+                            key={feature.id}
+                            className="metallic-card rounded-xl p-6 group hover:border-cherry-500/30 transition-all duration-300"
+                        >
+                            <div className="mb-4">
+                                <Icon className="w-8 h-8 text-cherry-500 mb-2" />
+                                <h3 className="text-lg font-bold text-white">{feature.title}</h3>
+                            </div>
+                            <p className="text-sm text-gray-400 leading-relaxed">
+                                {feature.description}
+                            </p>
+                        </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* 3D Content (Right) */}
+            <div className="order-2 h-[600px] w-full relative hidden lg:block">
+                 <View className="absolute inset-0 w-full h-full">
+                    <Features3D />
+                 </View>
+            </div>
+
         </div>
       </div>
     </section>

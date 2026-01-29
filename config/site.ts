@@ -1,6 +1,7 @@
 export const siteConfig = {
   name: 'Cherry IDE',
   tagline: 'Code with the Power of Open-Source AI',
+  version: '1.0.0',
   description: 'Cherry IDE brings the latest open-source AI models directly into your editor—no cloud, no subscriptions, complete control.',
   url: 'https://cherryide.com',
   author: 'Cherry IDE Team',

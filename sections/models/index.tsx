@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { useState, useRef } from 'react';
+import { View, Float, PerspectiveCamera, Points, PointMaterial } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
-import { aiModels, type AIModel } from '@/data/models';
+import { aiModels } from '@/data/models';
 import { Zap, Gauge, Rocket } from 'lucide-react';
-import MotionWrapper from '@/components/animations/motion-wrapper';
+import * as THREE from 'three';
+import { useFrame } from '@react-three/fiber';
 
 const performanceIcons = {
   fast: Zap,
@@ -18,6 +19,48 @@ const performanceColors = {
   balanced: 'text-blue-500 bg-blue-500/10',
   powerful: 'text-purple-500 bg-purple-500/10',
 };
+
+function Models3D() {
+    const pointsRef = useRef<THREE.Points>(null);
+    // Generate random points for a "neural network" cloud
+    const count = 1500; // Increased count for full screen
+    const positions = new Float32Array(count * 3);
+    for(let i=0; i<count*3; i++) {
+        // Spread points wider
+        positions[i] = (Math.random() - 0.5) * 20; 
+    }
+
+    useFrame((state, delta) => {
+        if(pointsRef.current) {
+            pointsRef.current.rotation.y += delta * 0.1;
+            pointsRef.current.rotation.x += delta * 0.05;
+        }
+    })
+
+    return (
+        <>
+            <PerspectiveCamera makeDefault position={[0, 0, 12]} fov={50} />
+            <Float speed={1} rotationIntensity={0.2} floatIntensity={0.2}>
+                <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
+                    <PointMaterial
+                        transparent
+                        color="#ff0f39"
+                        size={0.05}
+                        sizeAttenuation={true}
+                        depthWrite={false}
+                    />
+                </Points>
+                {/* Central Core */}
+                <mesh>
+                    <sphereGeometry args={[1, 32, 32]} />
+                    <meshStandardMaterial color="#222" wireframe />
+                </mesh>
+            </Float>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={1} color="#ff0f39" />
+        </>
+    )
+}
 
 export default function Models() {
   const [filter, setFilter] = useState<string>('all');
@@ -34,78 +77,70 @@ export default function Models() {
   ];
 
   return (
-    <section id="models" className="py-24 bg-dark-surface relative">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <MotionWrapper className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Choose Your AI Model
-          </h2>
-          <p className="text-xl text-gray-400">
-            Run the best open-source AI models locally. Switch on-the-fly based on your needs.
-          </p>
-        </MotionWrapper>
+    <section id="models" className="py-24 bg-black relative overflow-hidden">
+      {/* Full-section 3D Background */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none">
+        <View className="w-full h-full">
+          <Models3D />
+        </View>
+      </div>
 
-        {/* Filters */}
-        <MotionWrapper delay={0.2} className="flex flex-wrap justify-center gap-4 mb-12">
-          {filters.map((f) => (
-            <Button
-              key={f.value}
-              variant={filter === f.value ? 'default' : 'secondary'}
-              onClick={() => setFilter(f.value)}
-            >
-              {f.label}
-            </Button>
-          ))}
-        </MotionWrapper>
+      <div className="container mx-auto px-4 relative z-10">
+        
+        <div className="flex flex-col items-center">
+             
+            {/* Text Content */}
+            <div className="max-w-4xl mx-auto w-full">
+                <div className="mb-12 text-center">
+                    <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+                        Choose Your <br/>
+                        <span className="text-cherry-500">Intelligence</span>
+                    </h2>
+                    <p className="text-xl text-gray-300 max-w-2xl mx-auto drop-shadow-md">
+                        Run the best open-source AI models locally. Switch on-the-fly based on your needs—whether it's speed, accuracy, or specialized coding tasks.
+                    </p>
+                </div>
 
-        {/* Models Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {filteredModels.map((model, index) => {
-            const PerformanceIcon = performanceIcons[model.performance];
-            const performanceColor = performanceColors[model.performance];
+                {/* Filters */}
+                <div className="flex flex-wrap justify-center gap-2 mb-12">
+                {filters.map((f) => (
+                    <Button
+                    key={f.value}
+                    variant={filter === f.value ? 'default' : 'outline'}
+                    className={`rounded-full ${filter === f.value ? 'bg-cherry-600 hover:bg-cherry-700' : 'border-dark-border hover:bg-dark-bg/50 backdrop-blur-sm'}`}
+                    onClick={() => setFilter(f.value)}
+                    >
+                    {f.label}
+                    </Button>
+                ))}
+                </div>
 
-            return (
-              <MotionWrapper key={model.id} delay={index * 0.1}>
-                <Card className="group hover:scale-105 transition-transform duration-300 h-full">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <CardTitle className="text-xl mb-1">{model.name}</CardTitle>
-                        <p className="text-sm text-gray-500">{model.provider}</p>
-                      </div>
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${performanceColor}`}>
-                        <PerformanceIcon className="w-5 h-5" />
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-1 bg-dark-border rounded text-xs text-gray-400">
-                        {model.parameters}
-                      </span>
-                      <span className="px-2 py-1 bg-cherry-500/10 text-cherry-500 rounded text-xs capitalize">
-                        {model.performance}
-                      </span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="mb-4">
-                      {model.description}
-                    </CardDescription>
-                    <div className="flex flex-wrap gap-2">
-                      {model.useCase.map((useCase) => (
-                        <span
-                          key={useCase}
-                          className="px-2 py-1 bg-dark-bg rounded-full text-xs text-gray-400"
-                        >
-                          {useCase}
-                        </span>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </MotionWrapper>
-            );
-          })}
+                {/* Models List */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredModels.map((model, index) => {
+                    const PerformanceIcon = performanceIcons[model.performance];
+                    const performanceColor = performanceColors[model.performance];
+
+                    return (
+                        <div key={model.id} className="metallic-card p-5 rounded-xl border border-white/5 hover:border-cherry-500/30 transition-all flex flex-col items-start gap-4 h-full bg-dark-bg/60 backdrop-blur-md">
+                            <div className="flex w-full justify-between items-start">
+                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${performanceColor}`}>
+                                    <PerformanceIcon className="w-5 h-5" />
+                                </div>
+                                <span className="text-xs px-2 py-1 rounded bg-white/5 text-gray-400 border border-white/5">{model.parameters}</span>
+                            </div>
+                            
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1">{model.name}</h3>
+                                <p className="text-sm text-cherry-400 mb-2">{model.provider}</p>
+                                <p className="text-sm text-gray-400 line-clamp-3">{model.description}</p>
+                            </div>
+                        </div>
+                    );
+                })}
+                </div>
+            </div>
+
         </div>
       </div>
     </section>
