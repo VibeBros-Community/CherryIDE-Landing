@@ -39,3 +39,7 @@ next-env.d.ts
 *.swp
 *.swo
 *~
+
+# Prevent corrupted cache from being committed
+.next/
+node_modules/.cache/

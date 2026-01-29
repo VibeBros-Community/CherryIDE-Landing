@@ -1,28 +1,114 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-radius: var(--radius);
+
+  /* Custom Cherry Theme Colors */
+  --color-cherry-50: #fff1f2;
+  --color-cherry-100: #ffe4e6;
+  --color-cherry-200: #fecdd3;
+  --color-cherry-300: #fda4af;
+  --color-cherry-400: #ff4d6d;
+  --color-cherry-500: #ff0f39;
+  --color-cherry-600: #c90024;
+  --color-cherry-700: #be123c;
+  --color-cherry-800: #9f1239;
+  --color-cherry-900: #881337;
+  --color-cherry-950: #4c0519;
+
+  --color-dark-bg: #030303;
+  --color-dark-surface: #080808;
+  --color-dark-border: #1f1f1f;
+  --color-dark-hover: #141414;
+  --color-dark-metallic: #2a2a2a;
+
+  --breakpoint-2xl: 1400px;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-fade-in: fade-in 0.5s ease-out;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+  }
+  @keyframes glow {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+  @keyframes slide-up {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 347 77% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 63%;
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
-    --ring: 347 77% 60%;
+    --background: #030303;
+    --foreground: #f2f2f2;
+    --card: #080808;
+    --card-foreground: #f2f2f2;
+    --popover: #080808;
+    --popover-foreground: #f2f2f2;
+    --primary: #ff0f39;
+    --primary-foreground: #ffffff;
+    --secondary: #141414;
+    --secondary-foreground: #f2f2f2;
+    --muted: #141414;
+    --muted-foreground: #a1a1a1;
+    --accent: #141414;
+    --accent-foreground: #f2f2f2;
+    --destructive: #ff0000;
+    --destructive-foreground: #ffffff;
+    --border: #1f1f1f;
+    --input: #1f1f1f;
+    --ring: #ff0f39;
     --radius: 0.5rem;
   }
 }

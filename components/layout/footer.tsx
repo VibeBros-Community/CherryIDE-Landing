@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Github, Twitter } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
@@ -30,8 +31,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-cherry-500 to-cherry-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">C</span>
+              <div className="relative w-8 h-8">
+                <Image
+                  src="/images/logo.png"
+                  alt="Cherry IDE"
+                  fill
+                  className="object-contain"
+                />
               </div>
               <span className="text-xl font-bold text-white">Cherry IDE</span>
             </div>

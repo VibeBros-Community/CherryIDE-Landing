@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Menu, X, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -40,8 +41,13 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-gradient-to-br from-cherry-500 to-cherry-700 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110">
-              <span className="text-white font-bold text-lg">C</span>
+            <div className="relative w-8 h-8 transition-transform group-hover:scale-110">
+              <Image
+                src="/images/logo.png"
+                alt="Cherry IDE"
+                fill
+                className="object-contain"
+              />
             </div>
             <span className="text-xl font-bold text-white">Cherry IDE</span>
           </Link>
