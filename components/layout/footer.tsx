@@ -33,7 +33,7 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <div className="relative w-8 h-8">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logo-transparent.png"
                   alt="Cherry IDE"
                   fill
                   className="object-contain"

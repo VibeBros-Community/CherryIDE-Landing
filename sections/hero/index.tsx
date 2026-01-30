@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls } from '@react-three/drei';
+import { Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls, useTexture } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -10,56 +10,42 @@ import { formatNumber } from '@/lib/utils';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+const LOGO_TEXTURE_PATH = '/images/logo-transparent.png';
+
+const IDE_LOGO_SIZE = 0.5;
+const IDE_LOGO_POSITION: [number, number, number] = [0.95, 0.75, 0.17];
+
 function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<number> }) {
   const ref = useRef<THREE.Group>(null);
+  const logoTexture = useTexture(LOGO_TEXTURE_PATH);
 
-  // Create 3D Cherry Logo - accurate 1:1 copy
+  // Create 3D Cherry Logo for outer floating particle
   const cherryLogoGeometry = useMemo(() => {
-    // Main outer shape - cherry with connected outer curves
     const outerShape = new THREE.Shape();
-
-    // Left side - start from top left
     outerShape.moveTo(-0.1, 0.22);
-
-    // Left outer curve - thick C-shape wrapping around
     outerShape.bezierCurveTo(-0.25, 0.2, -0.4, 0.15, -0.48, 0.0);
     outerShape.bezierCurveTo(-0.54, -0.15, -0.54, -0.35, -0.48, -0.48);
-
-    // Left bottom curve - rounded lobe
     outerShape.bezierCurveTo(-0.42, -0.56, -0.28, -0.62, -0.12, -0.6);
-
-    // Bottom center - slight dip for double-lobe cherry shape
     outerShape.bezierCurveTo(-0.04, -0.59, 0.04, -0.59, 0.12, -0.6);
-
-    // Right bottom curve - rounded lobe
     outerShape.bezierCurveTo(0.28, -0.62, 0.42, -0.56, 0.48, -0.48);
-
-    // Right outer curve
     outerShape.bezierCurveTo(0.54, -0.35, 0.54, -0.15, 0.48, 0.0);
     outerShape.bezierCurveTo(0.4, 0.15, 0.25, 0.2, 0.1, 0.22);
-
-    // Top dip where stem connects
     outerShape.bezierCurveTo(0.05, 0.18, -0.05, 0.18, -0.1, 0.22);
 
-    // Create crescent-shaped gaps - smooth inner curves
     const leftGap = new THREE.Path();
-    // Outer edge of gap
     leftGap.moveTo(-0.15, 0.16);
     leftGap.bezierCurveTo(-0.28, 0.13, -0.38, 0.05, -0.42, -0.08);
     leftGap.bezierCurveTo(-0.45, -0.23, -0.44, -0.39, -0.38, -0.49);
     leftGap.bezierCurveTo(-0.33, -0.52, -0.24, -0.53, -0.16, -0.50);
-    // Inner edge of gap - smooth flowing curve
     leftGap.bezierCurveTo(-0.17, -0.42, -0.17, -0.32, -0.17, -0.22);
     leftGap.bezierCurveTo(-0.17, -0.10, -0.16, 0.02, -0.15, 0.10);
     leftGap.bezierCurveTo(-0.15, 0.13, -0.15, 0.15, -0.15, 0.16);
 
     const rightGap = new THREE.Path();
-    // Outer edge of gap
     rightGap.moveTo(0.15, 0.16);
     rightGap.bezierCurveTo(0.28, 0.13, 0.38, 0.05, 0.42, -0.08);
     rightGap.bezierCurveTo(0.45, -0.23, 0.44, -0.39, 0.38, -0.49);
     rightGap.bezierCurveTo(0.33, -0.52, 0.24, -0.53, 0.16, -0.50);
-    // Inner edge of gap - smooth flowing curve
     rightGap.bezierCurveTo(0.17, -0.42, 0.17, -0.32, 0.17, -0.22);
     rightGap.bezierCurveTo(0.17, -0.10, 0.16, 0.02, 0.15, 0.10);
     rightGap.bezierCurveTo(0.15, 0.13, 0.15, 0.15, 0.15, 0.16);
@@ -70,10 +56,10 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
       steps: 8,
       depth: 0.18,
       bevelEnabled: true,
-      bevelThickness: 0.07,  // Thicker bevel for more roundness
-      bevelSize: 0.06,       // Bigger bevel for more curve
-      bevelSegments: 24,     // Very smooth edges
-      curveSegments: 48      // Very smooth curves
+      bevelThickness: 0.07,
+      bevelSize: 0.06,
+      bevelSegments: 24,
+      curveSegments: 48
     };
 
     return new THREE.ExtrudeGeometry(outerShape, extrudeSettings);
@@ -155,9 +141,19 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
                     clearcoatRoughness={0}
                 />
             </mesh>
-            {/* 3D Cherry Logo - Unified shape with gaps */}
+            {/* 2D Logo Sprite - centered in crystal */}
+            <sprite position={[0, 0, 0]} scale={[1.5, 1.5, 1]}>
+                <spriteMaterial
+                    map={logoTexture}
+                    transparent
+                    toneMapped={false}
+                    depthTest={true}
+                    depthWrite={true}
+                />
+            </sprite>
+
+            {/* 3D Cherry Logo - outer floating particle */}
             <group position={[-3, -2, 1]} rotation={[0.15, -0.3, 0.2]} scale={[0.68, 0.7, 0.7]}>
-                {/* Main logo body - one piece with cutouts */}
                 <mesh geometry={cherryLogoGeometry}>
                     <meshPhysicalMaterial
                         color="#ff0f39"
@@ -170,7 +166,6 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
                     />
                 </mesh>
 
-                {/* Stem - single smooth curve matching logo */}
                 <mesh position={[0.02, 0.28, 0.09]} rotation={[0, 0, -0.35]}>
                     <cylinderGeometry args={[0.032, 0.048, 0.42, 64]} />
                     <meshPhysicalMaterial
@@ -180,7 +175,6 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
                     />
                 </mesh>
 
-                {/* Stem upper curve */}
                 <mesh position={[0.12, 0.48, 0.09]} rotation={[0, 0, -0.65]}>
                     <cylinderGeometry args={[0.025, 0.032, 0.18, 64]} />
                     <meshPhysicalMaterial
@@ -190,7 +184,6 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
                     />
                 </mesh>
 
-                {/* Stem tip - rounded */}
                 <mesh position={[0.2, 0.58, 0.09]}>
                     <sphereGeometry args={[0.025, 32, 32]} />
                     <meshPhysicalMaterial
@@ -220,6 +213,7 @@ function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> 
     const codeGroupRef = useRef<THREE.Group>(null);
     const popupRef = useRef<THREE.Group>(null);
     const cursorRef = useRef<THREE.Mesh>(null);
+    const logoTexture = useTexture(LOGO_TEXTURE_PATH);
 
     useFrame((state, delta) => {
         if (ref.current) {
@@ -366,6 +360,16 @@ function IDE({ transitionRef }: { transitionRef: React.MutableRefObject<number> 
                     <meshBasicMaterial color="#27c93f" />
                 </mesh>
             </group>
+
+            {/* Cherry Logo - Top right */}
+            <mesh position={IDE_LOGO_POSITION}>
+                <planeGeometry args={[IDE_LOGO_SIZE, IDE_LOGO_SIZE]} />
+                <meshBasicMaterial
+                    map={logoTexture}
+                    transparent
+                    toneMapped={false}
+                />
+            </mesh>
 
             {/* Sidebar - Separated Layer */}
             <mesh position={[-1.6, -0.1, 0.18]}>
