@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Inter, JetBrains_Mono, Permanent_Marker } from 'next/font/google';
 import './globals.css';
 import { siteConfig, generateStructuredData } from '@/lib/seo';
 import { Analytics } from '@vercel/analytics/react';
@@ -13,6 +13,13 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains',
+  display: 'swap',
+});
+
+const permanentMarker = Permanent_Marker({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-permanent-marker',
   display: 'swap',
 });
 
@@ -88,7 +95,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} ${permanentMarker.variable}`} suppressHydrationWarning>
         {children}
         <Analytics />
       </body>

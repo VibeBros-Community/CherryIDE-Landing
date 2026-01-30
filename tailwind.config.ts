@@ -93,6 +93,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],
         mono: ['var(--font-jetbrains)', 'monospace'],
+        script: ['var(--font-permanent-marker)', 'cursive'],
       },
       animation: {
         'float': 'float 6s ease-in-out infinite',

@@ -88,6 +88,10 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+  @keyframes cherry-flow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
 }
 
 /*
@@ -196,13 +200,23 @@
   }
 
   .cherry-gradient-animate {
-    background-image: linear-gradient(90deg, #ff0f39, #ff6685, #ff0f39);
-    background-size: 200% 200%;
-    background-position: 0% 50%;
-    -webkit-background-clip: text;
+    font-family: var(--font-permanent-marker);
+    font-weight: 400;
+    padding-right: 0.1em; /* Prevent italic clipping */
+    background: linear-gradient(
+      to right,
+      #cf0026 0%,
+      #ff0f39 25%,
+      #ff4d6d 50%,
+      #ff0f39 75%,
+      #cf0026 100%
+    );
+    background-size: 200% auto;
     background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
-    animation: cherry-gradient 8s ease-in-out infinite;
+    animation: cherry-flow 4s linear infinite;
   }
 }
 
