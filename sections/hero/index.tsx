@@ -517,7 +517,7 @@ export default function Hero() {
 
               <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-slide-up leading-tight">
                 Code with <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cherry-500 to-rose-400">
+                <span className="cherry-gradient-animate">
                   Open-Source AI
                 </span>
               </h1>

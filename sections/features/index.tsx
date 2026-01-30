@@ -350,7 +350,7 @@ export default function Features() {
           <div className="order-1 pointer-events-auto">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Powerful Features for{' '}
-              <span className="bg-gradient-to-r from-cherry-500 to-rose-400 bg-clip-text text-transparent">
+              <span className="cherry-gradient-animate">
                 Modern Development
               </span>
             </h2>

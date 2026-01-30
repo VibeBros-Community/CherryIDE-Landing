@@ -16,7 +16,7 @@ export default function FinalCTA() {
           {/* Main CTA */}
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Ready to Code with{' '}
-            <span className="bg-gradient-to-r from-cherry-400 to-cherry-600 bg-clip-text text-transparent">
+            <span className="cherry-gradient-animate">
               AI Freedom
             </span>
             ?

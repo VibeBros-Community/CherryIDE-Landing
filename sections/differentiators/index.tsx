@@ -26,7 +26,7 @@ export default function Differentiators() {
         <MotionWrapper className="mb-10">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
             Why Choose <br />
-            <span className="text-cherry-500">Cherry IDE?</span>
+            <span className="cherry-gradient-animate">Cherry IDE?</span>
           </h2>
           <p className="text-xl text-gray-300">
             Compare with other AI-powered editors

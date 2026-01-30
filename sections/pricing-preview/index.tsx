@@ -34,7 +34,7 @@ export default function PricingPreview() {
             <div className="mb-8">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1]">
                 Ready to Code with{' '}
-                <span className="bg-gradient-to-r from-cherry-500 to-rose-400 bg-clip-text text-transparent">
+                <span className="cherry-gradient-animate">
                   AI Freedom
                 </span>
                 ?

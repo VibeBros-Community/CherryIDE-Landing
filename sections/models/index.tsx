@@ -100,7 +100,7 @@ export default function Models() {
             <div className="order-1 lg:order-2">
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
                     Choose Your{' '}
-                    <span className="bg-gradient-to-r from-cherry-500 to-rose-400 bg-clip-text text-transparent">
+                    <span className="cherry-gradient-animate">
                         AI Intelligence
                     </span>
                 </h2>
