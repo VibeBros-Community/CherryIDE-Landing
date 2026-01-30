@@ -15,7 +15,7 @@ export default function SocialProof() {
         {/* Section Header */}
         <MotionWrapper className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Loved by Developers Worldwide
+            Loved by <span className="cherry-gradient-animate">Developers Worldwide</span>
           </h2>
           <p className="text-xl text-gray-400">
             Join thousands of developers who have switched to Cherry IDE
