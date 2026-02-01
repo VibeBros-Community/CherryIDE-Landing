@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, PerspectiveCamera } from '@react-three/drei';
+import { Html, OrthographicCamera } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { aiModels } from '@/data/models';
 import { useRef } from 'react';
 import * as THREE from 'three';
 import { VisibilityCanvas } from '@/components/3d/VisibilityCanvas';
+import { AnimatePresence, motion } from 'framer-motion';
+import { DeepSeekIcon, HuggingFaceIcon, MetaIcon, MicrosoftIcon } from '@/components/icons/ai-icons';
 
 // Official provider logos (icon only, no text)
 const providerLogos: Record<string, string> = {
@@ -28,49 +31,156 @@ const providerColors: Record<string, string> = {
   'BigCode': '#FFD21E',
 };
 
-function Models3D() {
-    const groupRef = useRef<THREE.Group>(null);
+type OrbitIcon = {
+  id: string;
+  render: (className: string) => ReactNode;
+};
 
-    useFrame((state) => {
-        if (groupRef.current) {
-            groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
-        }
+const ORBIT_ICONS: readonly OrbitIcon[] = [
+  { id: 'meta', render: (className) => <MetaIcon className={className} /> },
+  { id: 'microsoft', render: (className) => <MicrosoftIcon className={className} /> },
+  { id: 'deepseek', render: (className) => <DeepSeekIcon className={className} /> },
+  { id: 'huggingface', render: (className) => <HuggingFaceIcon className={className} /> },
+  { id: 'mistral', render: (className) => <img src="/icons/mistral.svg" alt="" className={className} /> },
+] as const;
+
+const ORBIT_COUNT = 3;
+const ORBIT_RADIUS = 2.15;
+const ORBIT_SPEED = 0.35;
+const ICON_SIZE_PX = 34;
+const LOGO_SIZE_PX = 90;
+const ICON_ROTATE_INTERVAL_MS = 3200;
+
+function ModelsHybrid3D() {
+  const orbitRef = useRef<THREE.Group>(null);
+  const iconRefs = useRef<Array<THREE.Group | null>>([]);
+  const [baseIndex, setBaseIndex] = useState(0);
+
+  useFrame((_, delta) => {
+    const orbit = orbitRef.current;
+    if (!orbit) return;
+
+    orbit.rotation.z += delta * ORBIT_SPEED;
+    const inverse = -orbit.rotation.z;
+    iconRefs.current.forEach((group) => {
+      if (group) group.rotation.z = inverse;
     });
+  });
 
-    return (
-        <>
-            <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
-            <ambientLight intensity={0.8} />
-            <pointLight position={[5, 5, 5]} intensity={1.5} color="#ff0f39" />
-            <pointLight position={[-5, -5, 5]} intensity={1} color="#ff6688" />
+  // Periodically rotate which icons appear at the three orbit positions.
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setBaseIndex((prev) => (prev + 1) % ORBIT_ICONS.length);
+    }, ICON_ROTATE_INTERVAL_MS);
+    return () => window.clearInterval(intervalId);
+  }, []);
 
-            <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.4}>
-                <group ref={groupRef}>
-                    {/* Simple layered rings */}
-                    {[0, 1, 2].map((i) => (
-                        <mesh key={i} position={[0, i * 0.8 - 0.8, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                            <torusGeometry args={[1.2 - i * 0.2, 0.08, 16, 32]} />
-                            <meshStandardMaterial
-                                color="#ff0f39"
-                                emissive="#ff0f39"
-                                emissiveIntensity={0.6 - i * 0.1}
-                            />
-                        </mesh>
-                    ))}
+  const iconSlots = Array.from({ length: ORBIT_COUNT }, (_, i) => {
+    const icon = ORBIT_ICONS[(baseIndex + i) % ORBIT_ICONS.length];
+    const angle = (i / ORBIT_COUNT) * Math.PI * 2;
+    return { icon, angle };
+  });
 
-                    {/* Central sphere */}
-                    <mesh>
-                        <sphereGeometry args={[0.4, 32, 32]} />
-                        <meshStandardMaterial
-                            color="#ff4466"
-                            emissive="#ff4466"
-                            emissiveIntensity={0.8}
-                        />
-                    </mesh>
-                </group>
-            </Float>
-        </>
-    );
+  return (
+    <>
+      {/* Orthographic camera keeps the scene visually “2D” (no perspective distortion). */}
+      <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={90} />
+
+      <ambientLight intensity={0.6} />
+      <pointLight position={[0, 0, 6]} intensity={1.2} color="#ff0f39" />
+      <pointLight position={[2, 2, 6]} intensity={0.9} color="#ff6688" />
+
+      {/* Flat ring around center */}
+      <mesh>
+        <torusGeometry args={[ORBIT_RADIUS, 0.06, 24, 140]} />
+        <meshPhysicalMaterial
+          color="#1a1b1e"
+          emissive="#ff0f39"
+          emissiveIntensity={0.25}
+          metalness={0.9}
+          roughness={0.2}
+          clearcoat={1}
+          clearcoatRoughness={0.18}
+        />
+      </mesh>
+
+      {/* Slight inner glow ring */}
+      <mesh>
+        <torusGeometry args={[ORBIT_RADIUS - 0.12, 0.02, 12, 140]} />
+        <meshBasicMaterial color="#ff0f39" transparent opacity={0.25} />
+      </mesh>
+
+      {/* Center 2D logo (DOM for crispness) */}
+      <Html center>
+        <div
+          style={{
+            width: LOGO_SIZE_PX,
+            height: LOGO_SIZE_PX,
+            display: 'grid',
+            placeItems: 'center',
+            pointerEvents: 'none',
+          }}
+        >
+          <img
+            src="/images/logo-transparent.png"
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            draggable={false}
+          />
+        </div>
+      </Html>
+
+      {/* Orbiting icons */}
+      <group ref={orbitRef}>
+        {iconSlots.map(({ icon, angle }, idx) => (
+          <group
+            key={idx}
+            ref={(el) => {
+              iconRefs.current[idx] = el;
+            }}
+            position={[Math.cos(angle) * ORBIT_RADIUS, Math.sin(angle) * ORBIT_RADIUS, 0.2]}
+          >
+            <Html center sprite>
+              <div
+                style={{
+                  width: ICON_SIZE_PX,
+                  height: ICON_SIZE_PX,
+                  display: 'grid',
+                  placeItems: 'center',
+                  pointerEvents: 'none',
+                }}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={icon.id}
+                    initial={{ opacity: 0, scale: 0.96, filter: 'blur(1px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, scale: 1.02, filter: 'blur(1px)' }}
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                    style={{ width: '100%', height: '100%' }}
+                  >
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: 10,
+                        background: 'rgba(15, 16, 18, 0.55)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        display: 'grid',
+                        placeItems: 'center',
+                      }}
+                    >
+                      {icon.render('w-7 h-7')}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </Html>
+          </group>
+        ))}
+      </group>
+    </>
+  );
 }
 
 export default function Models() {
@@ -96,8 +206,14 @@ export default function Models() {
 
             {/* 3D Content (Left) */}
             <div className="order-2 lg:order-1 h-[500px] w-full relative hidden lg:block">
-              <VisibilityCanvas className="w-full h-full" canvasProps={{ gl: { alpha: false } }}>
-                <Models3D />
+              <VisibilityCanvas
+                className="w-full h-full"
+                canvasProps={{
+                  dpr: [1, 1.5],
+                  gl: { alpha: false, antialias: false },
+                }}
+              >
+                <ModelsHybrid3D />
               </VisibilityCanvas>
             </div>
 
