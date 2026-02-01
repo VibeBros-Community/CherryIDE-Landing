@@ -136,12 +136,18 @@ export default function Features() {
       {/* Toned down gradient overlays */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(255,15,57,0.12)_0%,_transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(255,15,57,0.08)_0%,_transparent_60%)]" />
-      {/* Textured overlay */}
-      <div className="absolute inset-0 opacity-15 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==')]" />
+      {/* Avoid heavy SVG noise filters here; they can cause scroll-time raster jank on some GPUs. */}
 
       {/* Full-section 3D Background - Visibility-based rendering */}
       <SharedMaterialsProvider>
-        <VisibilityCanvas className="absolute inset-0 w-full h-full pointer-events-auto z-10">
+        <VisibilityCanvas
+          className="absolute inset-0 w-full h-full pointer-events-auto z-10"
+          canvasProps={{
+            // Decorative canvas: keep DPR/AA conservative to preserve scroll smoothness.
+            dpr: [1, 1.25],
+            gl: { alpha: false, antialias: false },
+          }}
+        >
           <Features3D />
         </VisibilityCanvas>
       </SharedMaterialsProvider>

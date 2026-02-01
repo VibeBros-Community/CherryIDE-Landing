@@ -51,7 +51,7 @@ export default function ClientHome() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-dark-bg bg-noise text-foreground overflow-x-hidden">
+    <div className="min-h-screen w-full bg-dark-bg text-foreground overflow-x-hidden">
       <PerformanceMonitor enabled={showStats} />
       <Header />
 
