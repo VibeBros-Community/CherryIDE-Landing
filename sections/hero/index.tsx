@@ -2,14 +2,14 @@
 
 import { useRef, useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Canvas } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls, useTexture } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { formatNumber } from '@/lib/utils';
-import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { VisibilityCanvas } from '@/components/3d/VisibilityCanvas';
 
 const LOGO_TEXTURE_PATH = '/images/logo-transparent.png';
 
@@ -493,15 +493,16 @@ export default function Hero() {
         className="relative min-h-screen flex items-center pt-24 pb-12 overflow-hidden bg-black"
     >
       {/* Full-section 3D Background - High Z-index for interaction, pointer-events-auto */}
-      <div className="absolute inset-0 w-full h-full pointer-events-auto z-10">
-         <Canvas
-           camera={{ position: [0, 0, 10], fov: 40 }}
-           shadows
-           style={{ width: '100%', height: '100%' }}
-         >
-            <Hero3D />
-         </Canvas>
-      </div>
+      <VisibilityCanvas
+        className="absolute inset-0 w-full h-full pointer-events-auto z-10"
+        canvasProps={{
+          camera: { position: [0, 0, 10], fov: 40 },
+          shadows: true,
+          gl: { alpha: false },
+        }}
+      >
+        <Hero3D />
+      </VisibilityCanvas>
 
       <div className="container mx-auto px-4 relative z-20 pointer-events-none">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

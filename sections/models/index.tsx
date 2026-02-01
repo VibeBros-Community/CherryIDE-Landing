@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { aiModels } from '@/data/models';
 import { useRef } from 'react';
 import * as THREE from 'three';
+import { VisibilityCanvas } from '@/components/3d/VisibilityCanvas';
 
 // Official provider logos (icon only, no text)
 const providerLogos: Record<string, string> = {
@@ -97,9 +98,9 @@ export default function Models() {
 
             {/* 3D Content (Left) */}
             <div className="order-2 lg:order-1 h-[500px] w-full relative hidden lg:block">
-              <Canvas style={{ width: '100%', height: '100%' }}>
+              <VisibilityCanvas className="w-full h-full" canvasProps={{ gl: { alpha: false } }}>
                 <Models3D />
-              </Canvas>
+              </VisibilityCanvas>
             </div>
 
             {/* Text Content (Right) */}
