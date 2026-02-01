@@ -1,6 +1,6 @@
 'use client';
 
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import type { CanvasProps } from '@react-three/fiber';
 import { useCanvasVisibility } from '@/hooks/use-canvas-visibility';
 import { useReducedQuality } from '@/lib/use-performance-mode';
@@ -11,7 +11,11 @@ interface VisibilityCanvasProps {
   className?: string;
   style?: React.CSSProperties;
   canvasProps?: Omit<CanvasProps, 'children'>;
-  pauseOnScroll?: boolean;
+  /**
+   * Dynamically lower DPR during active scrolling to reduce scroll-time GPU/raster pressure
+   * while keeping animations running.
+   */
+  adaptiveDprOnScroll?: boolean;
 }
 
 const SCROLL_IDLE_DEBOUNCE_MS = 140;
@@ -55,6 +59,27 @@ function useScrollActivity(enabled: boolean) {
   return isScrolling;
 }
 
+function AdaptiveDprOnScroll({
+  enabled,
+  isScrolling,
+  baseDpr,
+  scrollDpr,
+}: {
+  enabled: boolean;
+  isScrolling: boolean;
+  baseDpr: number;
+  scrollDpr: number;
+}) {
+  const setDpr = useThree((state) => state.setDpr);
+
+  useEffect(() => {
+    if (!enabled) return;
+    setDpr(isScrolling ? scrollDpr : baseDpr);
+  }, [enabled, isScrolling, baseDpr, scrollDpr, setDpr]);
+
+  return null;
+}
+
 /**
  * Canvas that only renders when visible in viewport
  * Massive GPU savings when scrolling past 3D sections
@@ -64,11 +89,11 @@ export function VisibilityCanvas({
   className,
   style,
   canvasProps,
-  pauseOnScroll = true,
+  adaptiveDprOnScroll = true,
 }: VisibilityCanvasProps) {
   const { ref, isVisible } = useCanvasVisibility(0.1);
   const useReduced = useReducedQuality();
-  const isScrolling = useScrollActivity(pauseOnScroll);
+  const isScrolling = useScrollActivity(adaptiveDprOnScroll);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const defaultGl: NonNullable<CanvasProps['gl']> = {
@@ -79,16 +104,24 @@ export function VisibilityCanvas({
     depth: true,
   };
 
-  const dpr = canvasProps?.dpr ?? (useReduced ? 1 : [1, 1.5]);
-  const shouldRender = isVisible && (!pauseOnScroll || !isScrolling);
+  const requestedDpr = canvasProps?.dpr ?? (useReduced ? 1 : [1, 1.5]);
+  const baseDpr =
+    typeof requestedDpr === 'number'
+      ? requestedDpr
+      : requestedDpr[1];
+  const scrollDpr =
+    typeof requestedDpr === 'number'
+      ? Math.min(1, requestedDpr)
+      : requestedDpr[0];
+  const canAdapt = adaptiveDprOnScroll && scrollDpr < baseDpr;
 
   return (
     <div ref={ref} className={className} style={style}>
       <Canvas
         {...canvasProps}
         ref={canvasRef}
-        dpr={dpr}
-        frameloop={shouldRender ? 'always' : 'never'} // Pause when offscreen (and optionally while scrolling)
+        dpr={baseDpr}
+        frameloop={isVisible ? 'always' : 'never'} // Pause when offscreen
         performance={{
           min: 0.5,
           ...canvasProps?.performance,
@@ -98,6 +131,12 @@ export function VisibilityCanvas({
           ...(canvasProps?.gl ?? {}),
         }}
       >
+        <AdaptiveDprOnScroll
+          enabled={canAdapt}
+          isScrolling={isScrolling}
+          baseDpr={baseDpr}
+          scrollDpr={scrollDpr}
+        />
         {children}
       </Canvas>
     </div>
