@@ -6,6 +6,8 @@ import Footer from '@/components/layout/footer';
 import { Hero3DSkeleton } from '@/components/placeholders/Hero3DSkeleton';
 import { Features3DSkeleton } from '@/components/placeholders/Features3DSkeleton';
 import { Models3DSkeleton } from '@/components/placeholders/Models3DSkeleton';
+import { PerformanceMonitor } from '@/components/debug/PerformanceMonitor';
+import { usePerformanceMode } from '@/lib/use-performance-mode';
 
 // Lazy imports using dynamic import() - client-side only
 import dynamic from 'next/dynamic';
@@ -42,6 +44,7 @@ import FAQ from '@/sections/faq';
 
 export default function ClientHome() {
   const [mounted, setMounted] = useState(false);
+  const { showStats } = usePerformanceMode();
 
   useEffect(() => {
     setMounted(true);
@@ -49,6 +52,7 @@ export default function ClientHome() {
 
   return (
     <div className="min-h-screen w-full bg-dark-bg bg-noise text-foreground overflow-x-hidden">
+      <PerformanceMonitor enabled={showStats} />
       <Header />
 
       {/* Main Content Layout - Each section has its own canvas */}
