@@ -1,27 +1,24 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Hook to detect performance mode based on URL params or localStorage
- * Useful for debugging and development
+ * Hook to detect performance mode - DEVELOPMENT ONLY
+ * Performance monitor is completely disabled in production builds
  */
 export function usePerformanceMode() {
   const [showStats, setShowStats] = useState(false);
 
   useEffect(() => {
-    // Check URL params for ?debug=true or ?stats=true
-    const params = new URLSearchParams(window.location.search);
-    const debugMode = params.get('debug') === 'true' || params.get('stats') === 'true';
-
-    // Check localStorage
-    const storedMode = localStorage.getItem('cherry-performance-stats') === 'true';
-
-    setShowStats(debugMode || storedMode || process.env.NODE_ENV === 'development');
+    // Only enable in development mode
+    // URL params and localStorage are ignored in production for security
+    setShowStats(process.env.NODE_ENV === 'development');
   }, []);
 
   const toggleStats = () => {
-    const newValue = !showStats;
-    setShowStats(newValue);
-    localStorage.setItem('cherry-performance-stats', String(newValue));
+    // Only allow toggling in development
+    if (process.env.NODE_ENV === 'development') {
+      const newValue = !showStats;
+      setShowStats(newValue);
+    }
   };
 
   return {
