@@ -1,13 +1,14 @@
 'use client';
 
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { Brain, ShieldCheck, Code2, Layers, Terminal, Puzzle } from 'lucide-react';
 import { coreFeatures } from '@/config/features';
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
-import { OptimizedPlanet } from './OptimizedPlanet';
+import { DynamicLODPlanet } from './DynamicLODPlanet';
 import { SharedMaterialsProvider } from '@/lib/shared-materials-context';
+import { VisibilityCanvas } from '@/components/3d/VisibilityCanvas';
 
 const iconMap = {
   'brain': Brain,
@@ -108,11 +109,11 @@ function Features3D() {
                     />
                 </mesh>
 
-                {/* Planets positioned along the wavy path */}
+                {/* Planets positioned along the wavy path - DYNAMIC LOD */}
                 {planets.map((planet, index) => {
                     const position = getWavyPosition(planet.t);
                     return (
-                        <OptimizedPlanet
+                        <DynamicLODPlanet
                             key={index}
                             size={planet.size}
                             position={position}
@@ -138,14 +139,12 @@ export default function Features() {
       {/* Textured overlay */}
       <div className="absolute inset-0 opacity-15 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjAuNiIvPjwvc3ZnPg==')]" />
 
-      {/* Full-section 3D Background */}
-      <div className="absolute inset-0 w-full h-full pointer-events-auto z-10">
-        <SharedMaterialsProvider>
-          <Canvas style={{ width: '100%', height: '100%' }}>
-            <Features3D />
-          </Canvas>
-        </SharedMaterialsProvider>
-      </div>
+      {/* Full-section 3D Background - Visibility-based rendering */}
+      <SharedMaterialsProvider>
+        <VisibilityCanvas className="absolute inset-0 w-full h-full pointer-events-auto z-10">
+          <Features3D />
+        </VisibilityCanvas>
+      </SharedMaterialsProvider>
 
       <div className="container mx-auto px-4 relative z-20 pointer-events-none">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
