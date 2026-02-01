@@ -9,12 +9,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit --incremental false",
     "clean": "rm -rf .next node_modules/.cache",
     "optimize:images": "node scripts/optimize-images.mjs",
     "generate:blur": "node scripts/generate-blur-placeholders.mjs"
   },
   "dependencies": {
+    "@lobehub/icons-static-png": "^1.78.0",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",

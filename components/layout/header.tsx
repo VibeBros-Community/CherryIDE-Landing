@@ -89,7 +89,9 @@ export default function Header() {
                 <Github className="w-5 h-5" />
               </Link>
             </Button>
-            <Button>Download</Button>
+            <Button asChild>
+              <Link href="/download">Download</Link>
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -133,7 +135,9 @@ export default function Header() {
                       <span>GitHub</span>
                     </Link>
                   </Button>
-                  <Button size="sm">Download</Button>
+                  <Button size="sm" asChild>
+                    <Link href="/download">Download</Link>
+                  </Button>
                 </div>
               </nav>
             </motion.div>

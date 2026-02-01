@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Download, Github, ArrowRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
@@ -28,10 +29,12 @@ export default function FinalCTA() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button size="xl" className="group min-w-[240px]">
-              <Download className="w-5 h-5" />
-              Download Cherry IDE
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <Button size="xl" className="group min-w-[240px]" asChild>
+              <Link href="/download">
+                <Download className="w-5 h-5" />
+                Download Cherry IDE
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
             </Button>
             <Button size="xl" variant="secondary" asChild className="min-w-[240px]">
               <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer">

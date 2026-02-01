@@ -5,20 +5,26 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
 import { aiModels } from '@/data/models';
-import { Zap, Gauge, Rocket } from 'lucide-react';
 import { useRef } from 'react';
 import * as THREE from 'three';
 
-const performanceIcons = {
-  fast: Zap,
-  balanced: Gauge,
-  powerful: Rocket,
+// Official provider logos (icon only, no text)
+const providerLogos: Record<string, string> = {
+  'Meta': 'https://cdn.simpleicons.org/meta/0668E1',
+  // Use the official mark (no text) with official colors.
+  'Mistral AI': '/icons/mistral.svg',
+  'DeepSeek': 'https://deepseek.com/favicon.ico',
+  // Use the mark (4 squares) without the wordmark.
+  'Microsoft': 'https://upload.wikimedia.org/wikipedia/commons/2/25/Microsoft_icon.svg',
+  'BigCode': 'https://cdn.simpleicons.org/huggingface/FFD21E',
 };
 
-const performanceColors = {
-  fast: 'text-green-500 bg-green-500/10',
-  balanced: 'text-blue-500 bg-blue-500/10',
-  powerful: 'text-purple-500 bg-purple-500/10',
+const providerColors: Record<string, string> = {
+  'Meta': '#0668E1',
+  'Mistral AI': '#FF8205',
+  'DeepSeek': '#4D6BFE',
+  'Microsoft': '#00A4EF',
+  'BigCode': '#FFD21E',
 };
 
 function Models3D() {
@@ -97,7 +103,7 @@ export default function Models() {
             </div>
 
             {/* Text Content (Right) */}
-            <div className="order-1 lg:order-2">
+            <div className="order-1 lg:order-2 lg:min-h-[500px] flex flex-col justify-center">
                 <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
                     Choose Your{' '}
                     <span className="cherry-gradient-animate">
@@ -123,20 +129,34 @@ export default function Models() {
                 </div>
 
                 {/* Models List */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto pr-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[440px] lg:h-[460px] overflow-y-auto pr-2" style={{ scrollbarGutter: 'stable' }}>
                 {filteredModels.slice(0, 8).map((model) => {
-                    const PerformanceIcon = performanceIcons[model.performance];
-                    const performanceColor = performanceColors[model.performance];
+                    const logoUrl = providerLogos[model.provider];
+                    const brandColor = providerColors[model.provider] || '#ff0f39';
 
                     return (
                         <div key={model.id} className="metallic-card p-5 rounded-xl hover:border-cherry-500/40 transition-all bg-dark-bg/60 backdrop-blur-sm">
                             <div className="flex items-center gap-3 mb-3">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${performanceColor}`}>
-                                    <PerformanceIcon className="w-5 h-5" />
+                                <div
+                                    className="w-10 h-10 rounded-lg flex items-center justify-center p-2"
+                                    style={{
+                                        backgroundColor: `${brandColor}15`,
+                                        border: `1px solid ${brandColor}30`,
+                                    }}
+                                >
+                                    {logoUrl ? (
+                                        <img
+                                            src={logoUrl}
+                                            alt={model.provider}
+                                            className="w-full h-full object-contain"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full" style={{ color: brandColor }}>AI</div>
+                                    )}
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="text-base font-bold text-white">{model.name}</h3>
-                                    <p className="text-xs text-cherry-400">{model.provider}</p>
+                                    <p className="text-xs" style={{ color: brandColor }}>{model.provider}</p>
                                 </div>
                             </div>
                             <p className="text-xs text-gray-400 line-clamp-2">{model.description}</p>

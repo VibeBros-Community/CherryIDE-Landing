@@ -3,13 +3,20 @@ import Image from 'next/image';
 import { Github, Twitter } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { images } from '@/config/images';
+import { cn } from '@/lib/utils';
 
-export default function Footer() {
+type FooterVariant = 'default' | 'transparent';
+
+interface FooterProps {
+  variant?: FooterVariant;
+}
+
+export default function Footer({ variant = 'default' }: FooterProps) {
   const footerLinks = {
     product: [
       { label: 'Features', href: '#features' },
       { label: 'Pricing', href: '#pricing' },
-      { label: 'Download', href: '#download' },
+      { label: 'Download', href: '/download' },
       { label: 'Changelog', href: '/changelog' },
     ],
     resources: [
@@ -26,7 +33,14 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-b from-[#4a020d] to-black">
+    <footer
+      className={cn(
+        'relative',
+        variant === 'default'
+          ? 'bg-gradient-to-b from-[#4a020d] to-black'
+          : 'bg-transparent'
+      )}
+    >
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}

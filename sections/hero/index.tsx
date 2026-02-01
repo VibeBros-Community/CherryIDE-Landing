@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useMemo } from 'react';
+import Link from 'next/link';
 import { Canvas } from '@react-three/fiber';
 import { Float, PerspectiveCamera, Environment, MeshTransmissionMaterial, RoundedBox, PresentationControls, useTexture } from '@react-three/drei';
 import { Button } from '@/components/ui/button';
@@ -528,10 +529,12 @@ export default function Hero() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 mb-12 animate-slide-up delay-200">
-                <Button size="xl" className="group shadow-lg shadow-cherry-500/20 bg-cherry-600 hover:bg-cherry-700 text-white border-none">
-                  <Download className="w-5 h-5 mr-2" />
-                  Download Now
-                  <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                <Button size="xl" className="group shadow-lg shadow-cherry-500/20 bg-cherry-600 hover:bg-cherry-700 text-white border-none" asChild>
+                  <Link href="/download">
+                    <Download className="w-5 h-5 mr-2" />
+                    Download Now
+                    <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </Button>
                 <Button size="xl" variant="outline" className="border-dark-border hover:bg-dark-surface" asChild>
                   <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer">

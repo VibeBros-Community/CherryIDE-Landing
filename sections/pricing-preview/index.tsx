@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Download, Check, Github, ArrowRight } from 'lucide-react';
@@ -47,10 +48,12 @@ export default function PricingPreview() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button size="xl" className="group shadow-lg shadow-cherry-500/20">
-                <Download className="w-5 h-5" />
-                Download Now
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <Button size="xl" className="group shadow-lg shadow-cherry-500/20" asChild>
+                <Link href="/download">
+                  <Download className="w-5 h-5" />
+                  Download Now
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               </Button>
               <Button size="xl" variant="outline" asChild className="border-white/10 hover:bg-white/5">
                 <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer">
@@ -109,10 +112,12 @@ export default function PricingPreview() {
               </CardContent>
 
               <CardFooter className="flex flex-col gap-4 pt-6 border-t border-white/5">
-                <Button size="xl" className="w-full group shadow-lg shadow-cherry-500/20">
-                  <Download className="w-5 h-5" />
-                  Download Cherry IDE
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <Button size="xl" className="w-full group shadow-lg shadow-cherry-500/20" asChild>
+                  <Link href="/download">
+                    <Download className="w-5 h-5" />
+                    Download Cherry IDE
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                 </Button>
                 <p className="text-center text-xs text-gray-400">
                   Available for Windows, macOS, and Linux
