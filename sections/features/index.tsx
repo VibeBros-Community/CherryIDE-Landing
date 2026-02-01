@@ -1,11 +1,13 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, PerspectiveCamera } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import { Brain, ShieldCheck, Code2, Layers, Terminal, Puzzle } from 'lucide-react';
 import { coreFeatures } from '@/config/features';
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
+import { OptimizedPlanet } from './OptimizedPlanet';
+import { SharedMaterialsProvider } from '@/lib/shared-materials-context';
 
 const iconMap = {
   'brain': Brain,
@@ -16,207 +18,7 @@ const iconMap = {
   'puzzle': Puzzle,
 };
 
-function Planet({
-    size,
-    position,
-    color,
-    emissive,
-    hasRings,
-    rotationSpeed,
-    orbitSpeed
-}: {
-    size: number;
-    position: [number, number, number];
-    color: string;
-    emissive: string;
-    hasRings?: boolean;
-    rotationSpeed: number;
-    orbitSpeed: number;
-}) {
-    const planetRef = useRef<THREE.Group>(null);
-    const orbitRef = useRef<THREE.Group>(null);
-    const cloudsRef = useRef<THREE.Mesh>(null);
-
-    useFrame((state) => {
-        if (planetRef.current) {
-            planetRef.current.rotation.y += rotationSpeed;
-            planetRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-        }
-        if (orbitRef.current) {
-            orbitRef.current.rotation.z = Math.sin(state.clock.elapsedTime * orbitSpeed) * 0.3;
-        }
-        if (cloudsRef.current) {
-            cloudsRef.current.rotation.y += rotationSpeed * 1.5;
-        }
-    });
-
-    return (
-        <group position={position}>
-            {/* Orbital ring with gradient */}
-            <group ref={orbitRef}>
-                <mesh rotation={[Math.PI / 2, 0, 0]}>
-                    <torusGeometry args={[size * 1.8, 0.02, 16, 64]} />
-                    <meshStandardMaterial
-                        color={color}
-                        emissive={emissive}
-                        emissiveIntensity={0.5}
-                        transparent
-                        opacity={0.4}
-                        metalness={0.8}
-                        roughness={0.2}
-                    />
-                </mesh>
-            </group>
-
-            <Float speed={1.5} rotationIntensity={0.4} floatIntensity={0.6}>
-                {/* Planet form */}
-                <group ref={planetRef}>
-                    {/* Inner core glow - pulsing */}
-                    <mesh>
-                        <sphereGeometry args={[size * 0.6, 32, 32]} />
-                        <meshStandardMaterial
-                            color={emissive}
-                            emissive={emissive}
-                            emissiveIntensity={2}
-                            transparent
-                            opacity={0.7}
-                        />
-                    </mesh>
-
-                    {/* Main planet body with better material */}
-                    <mesh>
-                        <sphereGeometry args={[size, 64, 64]} />
-                        <meshPhysicalMaterial
-                            color={color}
-                            emissive={emissive}
-                            emissiveIntensity={0.5}
-                            metalness={0.4}
-                            roughness={0.6}
-                            clearcoat={0.3}
-                            clearcoatRoughness={0.4}
-                        />
-                    </mesh>
-
-                    {/* Surface detail layer - rotating clouds/bands */}
-                    <mesh ref={cloudsRef}>
-                        <sphereGeometry args={[size * 1.02, 32, 32]} />
-                        <meshStandardMaterial
-                            color={color}
-                            emissive={emissive}
-                            emissiveIntensity={0.3}
-                            transparent
-                            opacity={0.4}
-                            depthWrite={false}
-                        />
-                    </mesh>
-
-                    {/* Outer atmosphere glow */}
-                    <mesh>
-                        <sphereGeometry args={[size * 1.12, 32, 32]} />
-                        <meshStandardMaterial
-                            color={emissive}
-                            emissive={emissive}
-                            emissiveIntensity={0.6}
-                            transparent
-                            opacity={0.25}
-                            side={THREE.BackSide}
-                        />
-                    </mesh>
-
-                    {/* Wireframe energy field */}
-                    <mesh>
-                        <sphereGeometry args={[size * 1.18, 16, 16]} />
-                        <meshStandardMaterial
-                            color={emissive}
-                            emissive={emissive}
-                            emissiveIntensity={0.8}
-                            transparent
-                            opacity={0.15}
-                            wireframe
-                        />
-                    </mesh>
-
-                    {/* Enhanced ring decorations */}
-                    {hasRings && (
-                        <>
-                            {/* Main ring - solid with metallic sheen */}
-                            <mesh rotation={[Math.PI / 3, 0, 0]}>
-                                <torusGeometry args={[size * 1.5, 0.12, 16, 64]} />
-                                <meshPhysicalMaterial
-                                    color={color}
-                                    emissive={emissive}
-                                    emissiveIntensity={0.7}
-                                    metalness={0.9}
-                                    roughness={0.1}
-                                    clearcoat={1}
-                                    clearcoatRoughness={0.1}
-                                    transparent
-                                    opacity={0.95}
-                                />
-                            </mesh>
-                            {/* Secondary ring - glowing */}
-                            <mesh rotation={[Math.PI / 3, 0, 0]}>
-                                <torusGeometry args={[size * 1.8, 0.06, 16, 64]} />
-                                <meshStandardMaterial
-                                    color={emissive}
-                                    emissive={emissive}
-                                    emissiveIntensity={1.2}
-                                    transparent
-                                    opacity={0.7}
-                                />
-                            </mesh>
-                            {/* Outer ring - subtle */}
-                            <mesh rotation={[Math.PI / 3, 0, 0]}>
-                                <torusGeometry args={[size * 2.1, 0.03, 8, 64]} />
-                                <meshStandardMaterial
-                                    color={color}
-                                    emissive={emissive}
-                                    emissiveIntensity={0.5}
-                                    transparent
-                                    opacity={0.4}
-                                />
-                            </mesh>
-                        </>
-                    )}
-
-                    {/* Refined glowing particles - orbiting */}
-                    {[...Array(6)].map((_, i) => {
-                        const angle = (i / 6) * Math.PI * 2;
-                        const radius = size * 1.5;
-                        return (
-                            <mesh
-                                key={i}
-                                position={[
-                                    Math.cos(angle) * radius,
-                                    Math.sin(angle) * radius,
-                                    Math.cos(angle * 2) * 0.3
-                                ]}
-                            >
-                                <sphereGeometry args={[0.06, 16, 16]} />
-                                <meshStandardMaterial
-                                    color={emissive}
-                                    emissive={emissive}
-                                    emissiveIntensity={3}
-                                    transparent
-                                    opacity={0.9}
-                                />
-                            </mesh>
-                        );
-                    })}
-
-                    {/* Enhanced point light for glow */}
-                    <pointLight
-                        position={[0, 0, 0]}
-                        intensity={2.5}
-                        distance={size * 7}
-                        color={emissive}
-                        decay={2}
-                    />
-                </group>
-            </Float>
-        </group>
-    );
-}
+// Removed old Planet component - now using OptimizedPlanet
 
 function Features3D() {
     const threadRef = useRef<THREE.Mesh<THREE.TubeGeometry, THREE.MeshStandardMaterial>>(null);
@@ -310,7 +112,7 @@ function Features3D() {
                 {planets.map((planet, index) => {
                     const position = getWavyPosition(planet.t);
                     return (
-                        <Planet
+                        <OptimizedPlanet
                             key={index}
                             size={planet.size}
                             position={position}
@@ -338,9 +140,11 @@ export default function Features() {
 
       {/* Full-section 3D Background */}
       <div className="absolute inset-0 w-full h-full pointer-events-auto z-10">
-        <Canvas style={{ width: '100%', height: '100%' }}>
-          <Features3D />
-        </Canvas>
+        <SharedMaterialsProvider>
+          <Canvas style={{ width: '100%', height: '100%' }}>
+            <Features3D />
+          </Canvas>
+        </SharedMaterialsProvider>
       </div>
 
       <div className="container mx-auto px-4 relative z-20 pointer-events-none">

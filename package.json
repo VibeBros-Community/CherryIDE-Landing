@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf .next node_modules/.cache"
+    "clean": "rm -rf .next node_modules/.cache",
+    "optimize:images": "node scripts/optimize-images.mjs",
+    "generate:blur": "node scripts/generate-blur-placeholders.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.1",
@@ -24,7 +26,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.13.5",
-    "gsap": "^3.12.5",
     "lenis": "^1.1.19",
     "lucide-react": "^0.468.0",
     "next": "^15.1.6",

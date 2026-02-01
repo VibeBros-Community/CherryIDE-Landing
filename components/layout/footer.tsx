@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Github, Twitter } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import { images } from '@/config/images';
 
 export default function Footer() {
   const footerLinks = {
@@ -33,10 +34,12 @@ export default function Footer() {
             <div className="flex items-center gap-2 mb-4">
               <div className="relative w-8 h-8">
                 <Image
-                  src="/images/logo-transparent.png"
-                  alt="Cherry IDE"
+                  src={images.logoTransparent.src}
+                  alt={images.logoTransparent.alt}
                   fill
                   className="object-contain"
+                  placeholder="blur"
+                  blurDataURL={images.logoTransparent.blurDataURL}
                 />
               </div>
               <span className="text-xl font-bold text-white">Cherry IDE</span>

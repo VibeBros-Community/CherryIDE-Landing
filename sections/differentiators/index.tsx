@@ -1,7 +1,8 @@
 'use client';
 
-import { Check, X } from 'lucide-react';
+import { Check, X, LockOpen, Lock, DollarSign, Target } from 'lucide-react';
 import MotionWrapper from '@/components/animations/motion-wrapper';
+import { getInteractionClasses } from '@/lib/design-tokens';
 
 const comparisonData = [
   { feature: 'Cost', cherry: 'Free Forever', cursor: '$20/month', windsurf: '$15/month' },
@@ -94,25 +95,45 @@ export default function Differentiators() {
             </table>
           </MotionWrapper>
 
-          {/* Key Differentiators - Compact */}
+          {/* Key Differentiators - Professional Icons */}
           <div className="grid grid-cols-2 gap-4">
-            <MotionWrapper delay={0.3} className="text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50">
-              <div className="text-3xl mb-1">🔓</div>
+            <MotionWrapper
+              delay={0.3}
+              className={`text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50 ${getInteractionClasses({ includeScale: true, includeBorder: true })}`}
+            >
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-cherry-500/20 to-cherry-600/10 flex items-center justify-center border border-cherry-500/20">
+                <LockOpen className="w-6 h-6 text-cherry-500" />
+              </div>
               <h3 className="text-sm font-bold text-white mb-1">Open Source</h3>
               <p className="text-xs text-gray-400">Fork & customize</p>
             </MotionWrapper>
-            <MotionWrapper delay={0.4} className="text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50">
-              <div className="text-3xl mb-1">🔒</div>
+            <MotionWrapper
+              delay={0.4}
+              className={`text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50 ${getInteractionClasses({ includeScale: true, includeBorder: true })}`}
+            >
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center border border-green-500/20">
+                <Lock className="w-6 h-6 text-green-500" />
+              </div>
               <h3 className="text-sm font-bold text-white mb-1">Privacy First</h3>
               <p className="text-xs text-gray-400">100% local</p>
             </MotionWrapper>
-            <MotionWrapper delay={0.5} className="text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50">
-              <div className="text-3xl mb-1">💰</div>
+            <MotionWrapper
+              delay={0.5}
+              className={`text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50 ${getInteractionClasses({ includeScale: true, includeBorder: true })}`}
+            >
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 flex items-center justify-center border border-yellow-500/20">
+                <DollarSign className="w-6 h-6 text-yellow-500" />
+              </div>
               <h3 className="text-sm font-bold text-white mb-1">Zero Cost</h3>
               <p className="text-xs text-gray-400">Free forever</p>
             </MotionWrapper>
-            <MotionWrapper delay={0.6} className="text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50">
-              <div className="text-3xl mb-1">🎯</div>
+            <MotionWrapper
+              delay={0.6}
+              className={`text-center p-4 bg-dark-surface/50 rounded-lg border border-dark-border/50 ${getInteractionClasses({ includeScale: true, includeBorder: true })}`}
+            >
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center border border-blue-500/20">
+                <Target className="w-6 h-6 text-blue-500" />
+              </div>
               <h3 className="text-sm font-bold text-white mb-1">Full Control</h3>
               <p className="text-xs text-gray-400">Your AI, your way</p>
             </MotionWrapper>

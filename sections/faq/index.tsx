@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getInteractionClasses } from '@/lib/design-tokens';
 
 const faqs = [
   {
@@ -39,12 +40,14 @@ const faqs = [
   },
 ];
 
-function FAQItem({ question, answer, isOpen, onClick }: { question: string; answer: string; isOpen: boolean; onClick: () => void }) {
+function FAQItem({ question, answer, isOpen, onClick, id }: { question: string; answer: string; isOpen: boolean; onClick: () => void; id: string }) {
   return (
     <div className="border-b border-white/5">
       <button
         onClick={onClick}
-        className="w-full text-left py-6 flex items-start justify-between gap-4 group"
+        aria-expanded={isOpen}
+        aria-controls={`faq-content-${id}`}
+        className={`w-full text-left py-6 flex items-start justify-between gap-4 group ${getInteractionClasses({ includeScale: false, includeColor: false })}`}
       >
         <span className="text-lg font-semibold text-white group-hover:text-cherry-500 transition-colors pr-8">
           {question}
@@ -54,9 +57,13 @@ function FAQItem({ question, answer, isOpen, onClick }: { question: string; answ
             'w-5 h-5 text-cherry-500 flex-shrink-0 transition-transform duration-300 mt-1',
             isOpen && 'rotate-180'
           )}
+          aria-hidden="true"
         />
       </button>
       <div
+        id={`faq-content-${id}`}
+        role="region"
+        aria-labelledby={`faq-question-${id}`}
         className={cn(
           'overflow-hidden transition-all duration-300',
           isOpen ? 'max-h-96 pb-6' : 'max-h-0'
@@ -96,10 +103,11 @@ export default function FAQ() {
           </div>
 
           {/* FAQ Items */}
-          <div className="space-y-0">
+          <div className="space-y-0" role="list">
             {faqs.map((faq, index) => (
               <FAQItem
                 key={index}
+                id={`${index}`}
                 question={faq.question}
                 answer={faq.answer}
                 isOpen={openIndex === index}
