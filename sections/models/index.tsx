@@ -8,21 +8,28 @@ import { VisibilityCanvas } from '@/components/3d/VisibilityCanvas';
 import { Button } from '@/components/ui/button';
 import { aiModels } from '@/data/models';
 
-// Official provider logos (icon only, no text)
-const providerLogos: Record<string, string> = {
-  'Meta': 'https://cdn.simpleicons.org/meta/0668E1',
-  'Mistral AI': '/icons/mistral.svg',
-  'DeepSeek': 'https://avatars.githubusercontent.com/u/148330874?s=200&v=4',
-  'Microsoft': 'https://upload.wikimedia.org/wikipedia/commons/2/25/Microsoft_icon.svg',
-  'BigCode': 'https://cdn.simpleicons.org/huggingface/FFD21E',
-};
-
-const providerColors: Record<string, string> = {
-  'Meta': '#0668E1',
-  'Mistral AI': '#FF8205',
-  'DeepSeek': '#4D6BFE',
-  'Microsoft': '#00A4EF',
-  'BigCode': '#FFD21E',
+// Provider branding (logo and color)
+const providerInfo: Record<string, { logo: string; color: string }> = {
+  'Meta': {
+    logo: '/icons/meta.svg',
+    color: '#0668E1'
+  },
+  'Mistral AI': {
+    logo: '/icons/mistral.svg',
+    color: '#FF8205'
+  },
+  'DeepSeek': {
+    logo: 'https://avatars.githubusercontent.com/u/148330874?s=200&v=4',
+    color: '#4D6BFE'
+  },
+  'Microsoft': {
+    logo: '/icons/microsoft.svg',
+    color: '#00A4EF'
+  },
+  'BigCode': {
+    logo: '/icons/huggingface.svg',
+    color: '#FFD21E'
+  },
 };
 
 // --- 2D Scene Components ---
@@ -193,8 +200,8 @@ export default function Models() {
                 {/* Models List */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-[440px] lg:h-[460px] overflow-y-auto pr-2" style={{ scrollbarGutter: 'stable' }}>
                 {filteredModels.slice(0, 8).map((model) => {
-                    const logoUrl = providerLogos[model.provider];
-                    const brandColor = providerColors[model.provider] || '#ff0f39';
+                    const provider = providerInfo[model.provider] || { logo: '', color: '#ff0f39' };
+                    const { logo: logoUrl, color: brandColor } = provider;
 
                     return (
                         <div key={model.id} className="metallic-card p-5 rounded-xl hover:border-cherry-500/40 transition-all bg-dark-bg/60 backdrop-blur-sm">

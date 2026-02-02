@@ -59,7 +59,7 @@ export function useLOD(
     return () => {
       lodManager.dispose();
     };
-  }, []);
+  }, [lodManager, type, radius, tubeRadius]);
 
   return {
     geometry: currentGeometry,

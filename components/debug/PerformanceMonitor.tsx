@@ -8,10 +8,6 @@ import { useEffect, useState, useRef } from 'react';
  * Automatically disabled in production builds
  */
 export function PerformanceMonitor({ enabled = false }: { enabled?: boolean }) {
-  // Force disable in production
-  if (process.env.NODE_ENV !== 'development') {
-    return null;
-  }
   const [fps, setFps] = useState(60);
   const [memory, setMemory] = useState('N/A');
   const frameCount = useRef(0);
@@ -52,6 +48,11 @@ export function PerformanceMonitor({ enabled = false }: { enabled?: boolean }) {
       }
     };
   }, [enabled]);
+
+  // Force disable in production
+  if (process.env.NODE_ENV !== 'development') {
+    return null;
+  }
 
   if (!enabled) return null;
 

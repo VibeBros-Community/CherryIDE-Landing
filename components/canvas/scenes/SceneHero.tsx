@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float, MeshTransmissionMaterial, Text } from '@react-three/drei';
+import { Float, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 export function SceneHero() {
