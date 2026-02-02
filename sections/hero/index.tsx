@@ -38,28 +38,27 @@ function Crystal({ transitionRef }: { transitionRef: React.MutableRefObject<numb
     leftGap.bezierCurveTo(-0.28, 0.13, -0.38, 0.05, -0.42, -0.08);
     leftGap.bezierCurveTo(-0.45, -0.23, -0.44, -0.39, -0.38, -0.49);
     leftGap.bezierCurveTo(-0.33, -0.52, -0.24, -0.53, -0.16, -0.50);
-    leftGap.bezierCurveTo(-0.17, -0.42, -0.17, -0.32, -0.17, -0.22);
-    leftGap.bezierCurveTo(-0.17, -0.10, -0.16, 0.02, -0.15, 0.10);
-    leftGap.bezierCurveTo(-0.15, 0.13, -0.15, 0.15, -0.15, 0.16);
+    // Curve the inner edge STRONGLY OUTWARDS (left) to make the center flesh much thicker/curvier
+    leftGap.bezierCurveTo(-0.32, -0.30, -0.32, -0.10, -0.15, 0.16);
 
     const rightGap = new THREE.Path();
     rightGap.moveTo(0.15, 0.16);
     rightGap.bezierCurveTo(0.28, 0.13, 0.38, 0.05, 0.42, -0.08);
     rightGap.bezierCurveTo(0.45, -0.23, 0.44, -0.39, 0.38, -0.49);
     rightGap.bezierCurveTo(0.33, -0.52, 0.24, -0.53, 0.16, -0.50);
-    rightGap.bezierCurveTo(0.17, -0.42, 0.17, -0.32, 0.17, -0.22);
-    rightGap.bezierCurveTo(0.17, -0.10, 0.16, 0.02, 0.15, 0.10);
-    rightGap.bezierCurveTo(0.15, 0.13, 0.15, 0.15, 0.15, 0.16);
+    // Curve the inner edge STRONGLY OUTWARDS (right)
+    rightGap.bezierCurveTo(0.32, -0.30, 0.32, -0.10, 0.15, 0.16);
 
     outerShape.holes.push(leftGap, rightGap);
 
     const extrudeSettings = {
       steps: 8,
-      depth: 0.18,
+      depth: 0.12, // Balanced depth
       bevelEnabled: true,
-      bevelThickness: 0.07,
-      bevelSize: 0.06,
-      bevelSegments: 24,
+      bevelThickness: 0.08,
+      bevelSize: 0.04,
+      bevelOffset: 0,
+      bevelSegments: 20,
       curveSegments: 48
     };
 
